@@ -1,4 +1,4 @@
-require 'Chingu'
+require 'chingu'
 
 module Colors
 	Dark_Orange = Gosu::Color.new(0xFFCC3300)
@@ -16,12 +16,15 @@ class Game < Chingu::Window
 
 		self.input = { :escape => :exit}
 
-		game_state_go
+		@gamestates = [Play, Introduction]
+
+		game_states_next
 	end
 
-	def game_state_go
-		push_game_state(Introduction)
-		push_game_state(Play)
+	def game_states_next
+		for i in 0..@gamestates.size
+			push_game_state(@gamestates[i])
+		end
 	end
 end
 
@@ -74,19 +77,20 @@ end
 class Introduction < Chingu::GameState
 	def initialize
 		super
-		@text = Chingu::Text.new("Welcome to ChinguRoids", :y => $window.HEIGHT/2, :font => "GeosansLight", :size => 30)
+		puts "Introduction"
+		@music = Gosu::Song.new($window, "media/music/backgroundmusic.ogg")
+		@music.play(true)
+
+		@text = Chingu::Text.new("Welcome to ChinguRoids", :y => $window.HEIGHT/2, :font => "GeosansLight", :size => 30, :color => Colors::Dark_Orange)
 		@text.x = $window.WIDTH/2 - @text.width/2
 
 		self.input = {:return => :next}
 	end
 	def next
+		@music.stop
 		close
 	end
-	def update
-
-	end
 	def draw
-		fill(Colors::Dark_Orange)
 		@text.draw
 	end
 end
@@ -94,7 +98,7 @@ end
 class Play < Chingu::GameState
 	def initialize
 		super 
-		fill(Colors::Brown_Orange)
+		puts "Play"
 		@player = Player.create(:x => 400, :y => 300)
 		@player.input = {:holding_left => :move_left, :holding_right => :move_right, :holding_up => :move_up, :holding_down => :move_down, :space => :fire}
 	end
