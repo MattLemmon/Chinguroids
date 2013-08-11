@@ -79,19 +79,27 @@ class Introduction < Chingu::GameState
 		super
 		puts "Introduction"
 		@music = Gosu::Song.new($window, "media/music/backgroundmusic.ogg")
+		@music.volume = 0.1
 		@music.play(true)
 
-		@text = Chingu::Text.new("Welcome to ChinguRoids", :y => $window.HEIGHT/2, :font => "GeosansLight", :size => 30, :color => Colors::Dark_Orange)
+		@text = Chingu::Text.new("Welcome to ChinguRoids", :y => $window.HEIGHT/2, size: => 30,:font => "GeosansLight", :size => 30, :color => Colors::Dark_Orange)
 		@text.x = $window.WIDTH/2 - @text.width/2
 
 		self.input = {:return => :next}
 	end
+
+	def update
+		puts "update"
+		@text.size = 30
+	end
+	def draw
+		puts "draw"
+		@text.draw
+	end
+
 	def next
 		@music.stop
 		close
-	end
-	def draw
-		@text.draw
 	end
 end
 
