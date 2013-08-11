@@ -1,5 +1,9 @@
 require 'Chingu'
 
+module Colors
+	Dark_Orange = Gosu::Color.new(0xFFCC3300)
+end
+
 class Game < Chingu::Window
 	attr_reader :WIDTH, :HEIGHT, :NAME
 
@@ -12,7 +16,12 @@ class Game < Chingu::Window
 
 		self.input = { :escape => :exit}
 
+		game_state_go
+	end
+
+	def game_state_go
 		push_game_state(Introduction)
+		push_game_state(Play)
 	end
 end
 
@@ -65,16 +74,19 @@ end
 class Introduction < Chingu::GameState
 	def initialize
 		super
-		fill(Color::Red)
-		@text = Chingu::Text.new("Welcome to ChinguRoids", :x => $window.WIDTH/4, :y => $window.HEIGHT/2, :font => "GeosansLight", :size => 30)
+		@text = Chingu::Text.new("Welcome to ChinguRoids", :y => $window.HEIGHT/2, :font => "GeosansLight", :size => 30)
 		@text.x = $window.WIDTH/2 - @text.width/2
 
 		self.input = {:return => :next}
 	end
 	def next
-		push_game_state(Play)
+		close
+	end
+	def update
+
 	end
 	def draw
+		fill(Colors::Dark_Orange)
 		@text.draw
 	end
 end
@@ -82,7 +94,7 @@ end
 class Play < Chingu::GameState
 	def initialize
 		super 
-		fill(Color::RED)
+		fill(Colors::Brown_Orange)
 		@player = Player.create(:x => 400, :y => 300)
 		@player.input = {:holding_left => :move_left, :holding_right => :move_right, :holding_up => :move_up, :holding_down => :move_down, :space => :fire}
 	end
