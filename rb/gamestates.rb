@@ -17,9 +17,10 @@ class Introduction < Chingu::GameState
 	end
 
 	def update
+		super
 		@counter += 1
 		if(@counter == 40)
-			Meteor.create(x: 180, y: 700, velocity_y: rand(5))
+			Meteor.create(x: 180, y: -30, velocity_y: rand(5))
 			@counter = 0
 			puts "created"
 		end
@@ -27,10 +28,10 @@ class Introduction < Chingu::GameState
 		Meteor.destroy_if {|meteor| meteor.outside_window?}
 	end
 
-	def draw
-		@text.draw
-		@text2.draw
-	end
+	#def draw
+	#	@text.draw
+	#	@text2.draw
+	#end
 
 	def next
 		@music.stop
