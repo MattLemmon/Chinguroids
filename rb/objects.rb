@@ -45,11 +45,15 @@ class Bullet < Chingu::GameObject
 end
 
 class Meteor < Chingu::GameObject
+	has_traits :velocity
+
 	def initialize(options)
 		super(options.merge(:image => Gosu::Image["assets/objects/meteor.png"]))
-	end
-	
-	def update
-		y += 5
+		@angular_velocity = 5
+
+		@random = rand(2)+1
+		if(@random == 1)
+			@angular_velocity = -@angular_velocity
+		end
 	end
 end

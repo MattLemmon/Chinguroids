@@ -2,6 +2,7 @@ class Introduction < Chingu::GameState
 	def initialize
 		super
 		puts "Introduction"
+		@counter = 0
 		@music = Gosu::Song.new($window, "media/music/backgroundmusic.ogg")
 		@music.volume = 0.0
 		@music.play(true)
@@ -16,7 +17,14 @@ class Introduction < Chingu::GameState
 	end
 
 	def update
+		@counter += 1
+		if(@counter == 40)
+			Meteor.create(x: 180, y: 700, velocity_y: rand(5))
+			@counter = 0
+			puts "created"
+		end
 
+		Meteor.destroy_if {|meteor| meteor.outside_window?}
 	end
 
 	def draw
