@@ -5,7 +5,7 @@ class Player < Chingu::GameObject
 		@image = Gosu::Image["assets/player/player.png"]
 		@speed = 5
 		@width, @height = 32, 32
-		@health = 10
+		@health = 5.5
 
 		@shoot = Gosu::Sample.new($window, "media/sfx/laser.OGG")
 	end
