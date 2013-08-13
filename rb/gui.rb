@@ -1,5 +1,4 @@
 class GUI < Chingu::GameObject
-	attr :game
 	def initialize
 		super
 		@heart_full = Gosu::Image.new($window, "assets/icons/heart.png")
@@ -17,7 +16,7 @@ class GUI < Chingu::GameObject
 		super
 
 		for i in 0..@health_bar.size
-			if(Introduction.player.health >= i)
+			if(player.health >= i)
 				@heart_full.draw(16*i, 0, Zorder::GUI)
 			elsif(player_health == i+0.5)
 				@heart_half.draw(16*i, 0, Zorder::GUI)

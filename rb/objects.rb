@@ -1,6 +1,4 @@
 class Player < Chingu::GameObject
-	attr :player
-	attr_accessor :health
 	def initialize(options)
 		super
 		@image = Gosu::Image["assets/player/player.png"]
