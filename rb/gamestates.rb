@@ -16,7 +16,6 @@ class Introduction < Chingu::GameState
 		@text2.x = $window.WIDTH/2 - @text2.width/2
 
 		@player = Player.create(:x => 400, :y => 450, :zorder => Zorder::GUI)
-
 		self.input = {:return => :next}
 	end
 

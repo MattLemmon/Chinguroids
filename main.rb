@@ -12,6 +12,7 @@ end
 
 module Colors
 	Dark_Orange = Gosu::Color.new(0xFFCC3300)
+	White = Gosu::Color.new(0xFFFFFFFF)
 end
 
 class Game < Chingu::Window
