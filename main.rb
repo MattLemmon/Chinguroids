@@ -3,6 +3,12 @@ require 'chingu'
 require_relative 'rb/objects.rb'
 require_relative 'rb/gamestates.rb'
 
+module Zorder
+	GUI = 4
+	Text = 3
+	Object = 2
+end
+
 module Colors
 	Dark_Orange = Gosu::Color.new(0xFFCC3300)
 end
@@ -21,10 +27,10 @@ class Game < Chingu::Window
 
 		@gamestates = [Play, Introduction]
 
-		game_states_next
+		game_state_next
 	end
 
-	def game_states_next
+	def game_state_next
 		for i in 0..@gamestates.size
 			push_game_state(@gamestates[i])
 		end

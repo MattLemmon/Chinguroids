@@ -3,15 +3,19 @@ class Introduction < Chingu::GameState
 		super
 		puts "Introduction"
 		@counter = 0
-		@music = Gosu::Song.new($window, "media/music/backgroundmusic.ogg")
-		@music.volume = 0.0
+		@music = Gosu::Song.new($window, "media/music/backgroundmusic.OGG")
+		@music.volume = 0.5
 		@music.play(true)
 
-		@text = Chingu::Text.new("Welcome to ChinguRoids", :y => $window.HEIGHT/4, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange)
+		@click = Gosu::Sample.new($window, "media/sfx/keypress.OGG")
+
+		@text = Chingu::Text.create("Welcome to ChinguRoids", :y => $window.HEIGHT/4, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
 		@text.x = $window.WIDTH/2 - @text.width/2
 
-		@text2 = Chingu::Text.new("Press ENTER to play", :y => $window.HEIGHT/4+$window.HEIGHT/4, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange)
+		@text2 = Chingu::Text.create("Press ENTER to play", :y => $window.HEIGHT/4+$window.HEIGHT/4, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
 		@text2.x = $window.WIDTH/2 - @text2.width/2
+
+		@player = Player.create(:x => 400, :y => 450, :zorder => Zorder::GUI)
 
 		self.input = {:return => :next}
 	end
@@ -19,21 +23,28 @@ class Introduction < Chingu::GameState
 	def update
 		super
 		@counter += 1
-		if(@counter == 40)
-			Meteor.create(x: 180, y: -30, velocity_y: rand(5))
+
+		if(@counter == 20)
+			@random = rand(4)+1
+
+			case @random
+			when 1
+				Meteor.create(x: rand($window.WIDTH)+1, y: 0, velocity_y: rand(5)+1, :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
+			when 2
+				Meteor.create(x: rand($window.WIDTH)+1, y: 600, velocity_y: rand(1..5)*-1, :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
+			when 3
+				Meteor.create(x: 0, y: rand($window.HEIGHT)+1, velocity_x: rand(1..5), :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
+			when 4
+				Meteor.create(x: 800, y: rand($window.HEIGHT)+1, velocity_x: rand(1..5)*-1, :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
+			end
 			@counter = 0
-			puts "created"
 		end
 
 		Meteor.destroy_if {|meteor| meteor.outside_window?}
 	end
 
-	#def draw
-	#	@text.draw
-	#	@text2.draw
-	#end
-
 	def next
+		@click.play
 		@music.stop
 		close
 	end
@@ -42,8 +53,7 @@ end
 class Play < Chingu::GameState
 	def initialize
 		super 
-		puts "Play"
-		@player = Player.create(:x => 400, :y => 300)
+		@player = Player.create(:x => 400, :y => 450)
 		@player.input = {:holding_left => :move_left, :holding_right => :move_right, :holding_up => :move_up, :holding_down => :move_down, :space => :fire}
 	end
 
