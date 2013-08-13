@@ -1,4 +1,5 @@
 class Player < Chingu::GameObject
+	attr_reader :health
 	def initialize(options)
 		super
 		@image = Gosu::Image["assets/player/player.png"]
