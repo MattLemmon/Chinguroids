@@ -53,7 +53,8 @@ end
 class Play < Chingu::GameState
 	def initialize
 		super 
-		@player = Player.create(:x => 400, :y => 450)
+		@gui = GUI.create
+		@player = Player.create(:x => 400, :y => 450, :zorder => Zorder::Object)
 		@player.input = {:holding_left => :move_left, :holding_right => :move_right, :holding_up => :move_up, :holding_down => :move_down, :space => :fire}
 	end
 

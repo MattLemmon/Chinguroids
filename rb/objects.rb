@@ -1,9 +1,12 @@
 class Player < Chingu::GameObject
-	def initialize(options = {})
+	attr :player
+	attr_accessor :health
+	def initialize(options)
 		super
 		@image = Gosu::Image["assets/player/player.png"]
 		@speed = 5
 		@width, @height = 32, 32
+		@health = 10
 
 		@shoot = Gosu::Sample.new($window, "media/sfx/laser.OGG")
 	end

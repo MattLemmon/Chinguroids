@@ -2,6 +2,7 @@ require 'chingu'
 
 require_relative 'rb/objects.rb'
 require_relative 'rb/gamestates.rb'
+require_relative 'rb/gui.rb'
 
 module Zorder
 	GUI = 4
