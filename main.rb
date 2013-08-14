@@ -5,9 +5,11 @@ require_relative 'rb/gamestates.rb'
 require_relative 'rb/gui.rb'
 
 module Zorder
-	GUI = 4
-	Text = 3
-	Object = 2
+	GUI = 400
+	Text = 300
+	Character = 200
+	Object = 50
+	Projectile = 1
 end
 
 module Colors

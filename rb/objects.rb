@@ -34,7 +34,7 @@ class Player < Chingu::GameObject
 
 	def fire
 		@shoot.play(rand(0.05..0.1))
-		Bullet.create(:x => @x, :y => @y-32, :angle => @angle)
+		Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
 	end
 
 	def update
@@ -49,17 +49,24 @@ class Player < Chingu::GameObject
 		elsif(@y <= @height/2)
 			@y = @height/2
 		end
-		self.velocity_x *= 0.94
-		self.velocity_y *= 0.94
+
+		self.velocity_x *= 0.91
+		self.velocity_y *= 0.91
 	end
 end
 
 class Bullet < Chingu::GameObject
+	has_traits :velocity
 	def initialize(options)
 		super(options.merge(:image => Gosu::Image["assets/player/laser.png"]))
+		@speed = 7
+
+		self.velocity_x = Gosu::offset_x(@angle, @speed)
+		self.velocity_y = Gosu::offset_y(@angle, @speed)
 	end
 	def update
-		@y -= 5
+		@y += self.velocity_y
+		@x += self.velocity_x
 	end
 end
 
