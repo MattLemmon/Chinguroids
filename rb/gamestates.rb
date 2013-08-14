@@ -54,7 +54,7 @@ class Play < Chingu::GameState
 		super 
 
 		@player = Player.create(:x => 400, :y => 450, :zorder => Zorder::Object)
-		@player.input = {:holding_left => :move_left, :holding_right => :move_right, :holding_up => :move_up, :holding_down => :move_down, :space => :fire}
+		@player.input = {:holding_left => :turn_left, :holding_right => :turn_right, :holding_up => :accelerate, :holding_down => :brake, :space => :fire}
 		@gui = GUI.create(@player)
 	end
 

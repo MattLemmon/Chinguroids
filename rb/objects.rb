@@ -1,44 +1,56 @@
 class Player < Chingu::GameObject
 	attr_reader :health,  :score
+	has_traits :velocity
 	def initialize(health)
 		super
 		@image = Gosu::Image["assets/player/player.png"]
 		@width, @height = 32, 32
-		@speed = 5
-		@health = 3
 
+		@speed, @rotate_speed = 5, 5
+	
+		@health = 3
 		@score = 0
 
 		@shoot = Gosu::Sample.new($window, "media/sfx/laser.OGG")
 	end
 
-	def move_left
-		if(@x > @speed + (@width/2))
-			@x -= @speed
-		end
+	def accelerate
+		self.velocity_x = Gosu::offset_x(self.angle, @speed)
+		self.velocity_y = Gosu::offset_y(self.angle, @speed)
 	end
 
-	def move_right
-		if(@x < $window.WIDTH - @speed - (@width/2) )
-			@x += @speed
-		end
+	def brake
+		self.velocity_x *= 0.7
+		self.velocity_y *= 0.7
 	end
 
-	def move_up
-		if(@y - @speed - (@height/2) > 0)
-	 		@y -= @speed
-	 	end 
+	def turn_left
+		self.angle -= @rotate_speed
 	end
 
-	def move_down
-		if(@y + @speed + (@height/2) < $window.HEIGHT)
-	 		@y += @speed
-	 	end
+	def turn_right
+		self.angle += @rotate_speed
 	end
 
 	def fire
 		@shoot.play(rand(0.05..0.1))
-		Bullet.create(:x => @x, :y => @y-32)
+		Bullet.create(:x => @x, :y => @y-32, :angle => @angle)
+	end
+
+	def update
+		if(@x >= $window.WIDTH - @width/2)
+			@x = $window.WIDTH - @width/2
+		elsif(@x <= @width/2)
+			@x = @width/2
+		end
+
+		if(@y >= $window.HEIGHT - @height/2)
+			@y = $window.HEIGHT - @height/2
+		elsif(@y <= @height/2)
+			@y = @height/2
+		end
+		self.velocity_x *= 0.94
+		self.velocity_y *= 0.94
 	end
 end
 

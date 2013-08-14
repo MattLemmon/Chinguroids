@@ -6,7 +6,7 @@ class GUI < Chingu::GameObject
 		@heart_half = Gosu::Image.new($window, "assets/icons/heart_half.png")
 		@heart_empty = Gosu::Image.new($window, "assets/icons/heart_empty.png")
 
-		@health_bar = Array.new(2, 3)
+		@health_bar = Array.new(2)
 
 		@score_text = Chingu::Text.create("Score: #{player.score}", :y => 0, :font => "GeosansLight", :size => 20, :color => Colors::White, :zorder => Zorder::GUI)
 		@score_text.x = $window.WIDTH/2 - @score_text.width/2
