@@ -52,6 +52,17 @@ class Player < Chingu::GameObject
 
 		self.velocity_x *= 0.91
 		self.velocity_y *= 0.91
+
+		# Particle -- Remember to fix the color error
+		Chingu::Particle.create(:x => @x, :y => @y,
+								:image => "assets/particles/particle_1.png", 
+								:color => 0xFF86EFFF, 
+								:mode => :additive,
+								:fade_rate => -45,
+								:angle => @angle,
+								:zorder => Zorder::Main_Character_Particles)
+
+		Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @speed); particle.x -= Gosu::offset_x(@angle, @speed)}
 	end
 end
 

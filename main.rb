@@ -7,14 +7,17 @@ require_relative 'rb/gui.rb'
 module Zorder
 	GUI = 400
 	Text = 300
-	Character = 200
+	Main_Character = 200
+	Main_Character_Particles = 199
 	Object = 50
-	Projectile = 1
+	Projectile = 15
+	Particle = 5
 end
 
 module Colors
 	Dark_Orange = Gosu::Color.new(0xFFCC3300)
 	White = Gosu::Color.new(0xFFFFFFFF)
+	Blue_Laser = Gosu::Color.new(0xFF86EFFF)
 end
 
 class Game < Chingu::Window

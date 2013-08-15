@@ -15,7 +15,7 @@ class Introduction < Chingu::GameState
 		@text2 = Chingu::Text.create("Press ENTER to play", :y => $window.HEIGHT/4+$window.HEIGHT/4, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
 		@text2.x = $window.WIDTH/2 - @text2.width/2
 
-		@player = Player.create(:x => 400, :y => 450, :zorder => Zorder::GUI)
+		@player = Player.create(:x => 400, :y => 450, :zorder => Zorder::Main_Character)
 		self.input = {:return => :next}
 	end
 
@@ -53,7 +53,7 @@ class Play < Chingu::GameState
 	def initialize
 		super 
 
-		@player = Player.create(:x => 400, :y => 450, :zorder => Zorder::Character)
+		@player = Player.create(:x => 400, :y => 450, :zorder => Zorder::Main_Character)
 		@player.input = {:holding_left => :turn_left, :holding_right => :turn_right, :holding_up => :accelerate, :holding_down => :brake, :space => :fire}
 		@gui = GUI.create(@player)
 	end
