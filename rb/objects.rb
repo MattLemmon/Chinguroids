@@ -5,9 +5,7 @@ class Player < Chingu::GameObject
 		super
 		@image = Gosu::Image["assets/player/player.png"]
 		@width, @height = 32, 32
-
 		@speed, @rotate_speed = 5, 5
-	
 		@health = 3
 		@score = 0
 
@@ -57,12 +55,13 @@ class Player < Chingu::GameObject
 		Chingu::Particle.create(:x => @x, :y => @y,
 								:image => "assets/particles/particle_1.png", 
 								:color => 0xFF86EFFF, 
-								:mode => :additive,
+								:mode => :default,
 								:fade_rate => -45,
 								:angle => @angle,
 								:zorder => Zorder::Main_Character_Particles)
 
 		Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @speed); particle.x -= Gosu::offset_x(@angle, @speed)}
+		Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
 	end
 end
 
