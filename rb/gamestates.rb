@@ -28,13 +28,21 @@ class Introduction < Chingu::GameState
 
 			case @random
 			when 1
-				Meteor.create(x: rand($window.WIDTH)+1, y: 0, velocity_y: rand(5)+1, :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
+				Meteor.create(x: rand($window.WIDTH)+1, y: 0,
+							  velocity_y: rand(5)+1, velocity_x: rand(-5..5),
+							  :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
 			when 2
-				Meteor.create(x: rand($window.WIDTH)+1, y: 600, velocity_y: rand(1..5)*-1, :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
+				Meteor.create(x: rand($window.WIDTH)+1, y: 600,
+				 			  velocity_y: rand(1..5)*-1, velocity_x: rand(-5..5),
+				  			  :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
 			when 3
-				Meteor.create(x: 0, y: rand($window.HEIGHT)+1, velocity_x: rand(1..5), :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
+				Meteor.create(x: 0, y: rand($window.HEIGHT)+1,
+							  velocity_x: rand(1..5), velocity_y: rand(-5..5),
+					  		  :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
 			when 4
-				Meteor.create(x: 800, y: rand($window.HEIGHT)+1, velocity_x: rand(1..5)*-1, :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
+				Meteor.create(x: 800, y: rand($window.HEIGHT)+1,
+				 			  velocity_x: rand(1..5)*-1, velocity_y: rand(-5..5),
+				 			  :scale => rand(0.5)+0.4, :zorder => Zorder::Object)
 			end
 			@counter = 0
 		end
