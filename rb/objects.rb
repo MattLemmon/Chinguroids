@@ -1,13 +1,12 @@
 class Player < Chingu::GameObject
-	attr_reader :health,  :score
-	has_traits :velocity
+	attr_reader :health, :score
+	has_traits :velocity, :collision_detection, :bounding_circle
 	def initialize(health)
 		super
 		@image = Gosu::Image["assets/player/player.png"]
 		@width, @height = 32, 32
 		@speed, @rotate_speed = 5, 5
 		@health = 3
-		@score = 0
 
 		@shoot = Gosu::Sample.new($window, "media/sfx/laser.OGG")
 	end
@@ -66,7 +65,8 @@ class Player < Chingu::GameObject
 end
 
 class Bullet < Chingu::GameObject
-	has_traits :velocity
+	has_traits :velocity, :collision_detection, :bounding_circle
+
 	def initialize(options)
 		super(options.merge(:image => Gosu::Image["assets/player/laser.png"]))
 		@speed = 7
@@ -74,6 +74,7 @@ class Bullet < Chingu::GameObject
 		self.velocity_x = Gosu::offset_x(@angle, @speed)
 		self.velocity_y = Gosu::offset_y(@angle, @speed)
 	end
+
 	def update
 		@y += self.velocity_y
 		@x += self.velocity_x
@@ -81,7 +82,7 @@ class Bullet < Chingu::GameObject
 end
 
 class Meteor < Chingu::GameObject
-	has_traits :velocity
+	has_traits :velocity, :collision_detection, :bounding_circle
 
 	def initialize(options)
 		super(options.merge(:image => Gosu::Image["assets/objects/meteor.png"]))

@@ -8,12 +8,13 @@ class GUI < Chingu::GameObject
 
 		@health_bar = Array.new(2)
 
-		@score_text = Chingu::Text.create("Score: #{player.score}", :y => 0, :font => "GeosansLight", :size => 20, :color => Colors::White, :zorder => Zorder::GUI)
+		@score_text = Chingu::Text.create("Score: #{$score}", :y => 0, :font => "GeosansLight", :size => 20, :color => Colors::White, :zorder => Zorder::GUI)
 		@score_text.x = $window.WIDTH/2 - @score_text.width/2
 	end
 
 	def update
 		super
+		@score_text.text = "Score: #{$score}"
 	end
 
 	def draw
@@ -28,5 +29,4 @@ class GUI < Chingu::GameObject
 			end
 		end
 	end
-
 end

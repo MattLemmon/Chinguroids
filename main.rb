@@ -24,16 +24,12 @@ class Game < Chingu::Window
 	attr_reader :WIDTH, :HEIGHT, :NAME
 
 	def initialize
-		# Window START
 		@WIDTH, @HEIGHT, @NAME = 800, 600, "ChinguRoids 0.01 - Fractional"
 		super(800, 600, false)
 		self.caption = @NAME
-		# Window END
-
 		self.input = { :escape => :exit}
 
-		@gamestates = [Play, Introduction]
-
+		@gamestates = [Level_1, Introduction]
 		game_state_next
 	end
 
