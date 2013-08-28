@@ -1,7 +1,10 @@
 require 'chingu'
+include Gosu
 
-require_relative 'rb/objects.rb'
+require_relative 'rb/welcome.rb'
+require_relative 'rb/pause.rb'
 require_relative 'rb/gamestates.rb'
+require_relative 'rb/objects.rb'
 require_relative 'rb/gui.rb'
 
 module Zorder
@@ -40,4 +43,62 @@ class Game < Chingu::Window
 	end
 end
 
-Game.new.show
+#
+#  Window Class
+#
+class GameWindow < Chingu::Window
+  def initialize
+	@WIDTH, @HEIGHT, @NAME = 800, 600, "ChinguRoids 0.01 - Fractional"
+    super(800,600,false)
+    self.caption = @NAME
+    @cursor = true # comment out to hide cursor
+    self.input = { :esc => :exit,
+                   :enter => :next,
+                   :return => :next,
+                   [:q, :l] => :pop,
+                   :z => :log,
+                   :r => lambda{current_game_state.setup}
+                 }
+    @nextgame = [ Level_3, Level_1, Level_2, Welcome ]
+    @w = true
+    @ng = -1
+  end
+
+  def setup
+    retrofy
+    push_game_state(Introduction)
+  end
+
+  def log
+    puts $window.current_game_state
+  end
+
+  def next
+    if @ng == 3
+      @ng = 0
+    else
+        @ng += 1
+    end
+    push_game_state(@nextgame[@ng])
+  end
+
+  def pop
+    if $window.current_game_state.to_s != "Pause" && $window.current_game_state.to_s != "GameOver" then
+      if @ng == 0
+        @ng = 13
+      else
+        @ng -= 1
+      end
+    end
+    if $window.current_game_state.to_s != "Introduction" then
+      pop_game_state(:setup => false)
+    end
+    if $window.current_game_state.to_s == "Introduction" then
+      @ng = -1
+    end
+  end
+end
+
+
+
+GameWindow.new.show
