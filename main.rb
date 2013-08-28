@@ -23,32 +23,19 @@ module Colors
 	Blue_Laser = Gosu::Color.new(0xFF86EFFF)
 end
 
-class Game < Chingu::Window
-	attr_reader :WIDTH, :HEIGHT, :NAME
-
-	def initialize
-		@WIDTH, @HEIGHT, @NAME = 800, 600, "ChinguRoids 0.01 - Fractional"
-		super(800, 600, false)
-		self.caption = @NAME
-		self.input = { :escape => :exit}
-
-		@gamestates = [Level_1, Introduction]
-		game_state_next
-	end
-
-	def game_state_next
-		for i in 0..@gamestates.size
-			push_game_state(@gamestates[i])
-		end
-	end
-end
 
 #
-#  Window Class
+#
+#  GameWindow Class
 #
 class GameWindow < Chingu::Window
   def initialize
-	@WIDTH, @HEIGHT, @NAME = 800, 600, "ChinguRoids 0.01 - Fractional"
+  @NAME = "ChinguRoids 0.01 - Fractional"
+  $max_x = 815
+  $max_y = 615
+  $scr_edge = 15
+  $cooling_down = 70
+
     super(800,600,false)
     self.caption = @NAME
     @cursor = true # comment out to hide cursor
@@ -59,7 +46,7 @@ class GameWindow < Chingu::Window
                    :z => :log,
                    :r => lambda{current_game_state.setup}
                  }
-    @nextgame = [ Level_3, Level_1, Level_2, Welcome ]
+    @nextgame = [ Level_1, Level_2, Level_3, Welcome ]
     @w = true
     @ng = -1
   end
@@ -99,6 +86,28 @@ class GameWindow < Chingu::Window
   end
 end
 
+#
+#  Alternate Window Class (make small change below to activate)
+#
+class Game < Chingu::Window
+	attr_reader :WIDTH, :HEIGHT, :NAME
+
+	def initialize
+		@WIDTH, @HEIGHT, @NAME = 800, 600, "ChinguRoids 0.01 - Fractional"
+		super(800, 600, false)
+		self.caption = @NAME
+		self.input = { :escape => :exit}
+
+		@gamestates = [Level_1, Introduction]
+		game_state_next
+	end
+
+	def game_state_next
+		for i in 0..@gamestates.size
+			push_game_state(@gamestates[i])
+		end
+	end
+end
 
 
-GameWindow.new.show
+GameWindow.new.show # change to Game.new.show to see alternate window class
