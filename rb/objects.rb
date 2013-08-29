@@ -1,4 +1,4 @@
-DEBUG = true  # Set to true to see bounding circles used for collision detection
+DEBUG = false  # Set to true to see bounding circles used for collision detection
 
 #
 #
@@ -12,7 +12,7 @@ class Player < Chingu::GameObject
 		super
 		@image = Gosu::Image["assets/player.png"]
 		@width, @height = 32, 32
-		@max_speed, @speed, @part_speed, @rotate_speed = 12, 0.3, 5, 5
+		@max_speed, @speed, @part_speed, @rotate_speed = 12, 0.4, 7, 5
 #		$health = 6
 
 #		@shoot = Gosu::Sample.new($window, "media/sfx/laser.OGG")
@@ -39,8 +39,8 @@ class Player < Chingu::GameObject
 	end
 
 	def brake
-		self.velocity_x *= 0.95
-		self.velocity_y *= 0.95
+		self.velocity_x *= 0.9
+		self.velocity_y *= 0.9
 	end
 
 	def turn_left
@@ -56,36 +56,34 @@ class Player < Chingu::GameObject
 		Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
 	end
 
-    def update
-      self.velocity_x *= 0.99
-      self.velocity_y *= 0.99
+  def update
+    self.velocity_x *= 0.99
+    self.velocity_y *= 0.99
 
-      if @cooling_down != 0
-        @cooling_down -= 1
-      end
-      if @x < -@scr_edge     # wrap around beyond screen edges
-        @x = @max_x
-      end
-      if @y < -@scr_edge
-        @y = @max_y
-      end
-      if @x > @max_x
-        @x = -@scr_edge
-      end
-      if @y > @max_y
-        @y = -@scr_edge
-      end
+    if @cooling_down != 0
+      @cooling_down -= 1
+    end
+    if @x < -@scr_edge     # wrap around beyond screen edges
+      @x = @max_x
+    end
+    if @y < -@scr_edge
+      @y = @max_y
+    end
+    if @x > @max_x
+      @x = -@scr_edge
+    end
+    if @y > @max_y
+      @y = -@scr_edge
+    end
 
-
-
-		# Particle -- Remember to fix the color error
+  # Particle -- Remember to fix the color error
 		Chingu::Particle.create(:x => @x, :y => @y,
-								:image => "assets/particle_1.png", 
-								:color => 0xFF86EFFF, 
-								:mode => :default,
-								:fade_rate => -45,
-								:angle => @angle,
-								:zorder => Zorder::Main_Character_Particles)
+	  				:image => "assets/particle_1.png", 
+						:color => 0xFF86EFFF, 
+						:mode => :default,
+						:fade_rate => -45,
+						:angle => @angle,
+						:zorder => Zorder::Main_Character_Particles)
 
 		Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @part_speed); particle.x -= Gosu::offset_x(@angle, @part_speed)}
 		Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
@@ -311,5 +309,81 @@ class Meteor3 < Chingu::GameObject
   end
 end
 
+#
+#  GOSU LOGO
+#
+class GosuLogo < Chingu::GameObject
+  def setup
+    @image = Image["media/assets/gosu.png"]
+  end
+end
 
+#
+#  HIGHLIGHT
+#
+class Highlight < Chingu::GameObject
+  def setup
+    @image = Image["media/assets/highlight.png"]
+  end
+  def update
+    @x += 5
+  end
+end
 
+#
+#  HIGHLIGHT2
+#
+class Highlight2 < Chingu::GameObject
+  def setup
+    @image = Image["media/assets/highlight2.png"]
+  end
+  def update
+    @x += 5
+  end
+end
+
+#
+#  KNIGHT
+#
+class Knight < Chingu::GameObject
+  trait :timer
+  def initialize(options)
+    super
+#    self.factor = 0.99
+    @image = Image["media/assets/knight.png"]
+    @voice = Sound["media/audio/mumble1.ogg"]
+    @voice2 = Sound["media/audio/mumble2.ogg"]
+    @velox = 0
+    @veloy = 0
+    @factoring = 1
+
+  end
+
+  def movement
+    @velox = -7
+  end
+
+  def enter_ship
+    @veloy = 2
+    @factoring = 0.98
+  end
+
+  def speak
+    @voice.play
+    after (800) {
+      @voice2.play
+    }
+  end
+
+  def update
+    self.factor *= @factoring
+    @x += @velox
+    @y += @veloy
+    if @x <= 400; @velox = 0; end
+    if @y >= 450; @veloy = 0; end
+  end
+
+#  def draw
+#    @image.draw_rot(@x, @y, 1, @angle)
+#  end
+end

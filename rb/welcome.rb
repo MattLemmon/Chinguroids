@@ -28,12 +28,19 @@ end
 class GameOver < Chingu::GameState
   def initialize
     super
-    self.input = {:esc => :exit }#:enter => Introduction }
-    @t1 = Chingu::Text.create(:text=>"You died." ,       :x=>266, :y=>180, :size=>28)
-    @t2 = Chingu::Text.create(:text=>"Press enter" ,  :x=>266, :y=>280, :size=>28)
-    @t1.x = 400 - @t2.width/2
+    self.input = { :esc => :exit, [:enter, :return] => Introduction, :p => Pause, :r => lambda{current_game_state.setup}, [:q, :l] => :pop }
+  end
+
+  def setup
+    @t1 = Chingu::Text.create(:text=>"You died.", :y=>180, :size=>28)
+    @t1.x = 400 - @t1.width/2
+    @t2 = Chingu::Text.create(:text=>"Press enter", :y=>280, :size=>28)
     @t2.x = 400 - @t2.width/2
     $window.caption = "Game Over"
+  end
+
+  def pop
+    pop_game_state(:setup => false)
   end
 end
 
@@ -44,15 +51,39 @@ end
 class Win < Chingu::GameState
   def initialize
     super
-    @t1 = Chingu::Text.create(:text=>"You win." , :y=>180, :size=>28)
+    self.input = { :esc => :exit, [:enter, :return] => Introduction, :p => Pause, :r => lambda{current_game_state.setup}, [:q, :l] => :pop }
+  end
+
+  def setup
+    @t1 = Chingu::Text.create(:text=>"You win." , :y=>300, :size=>40)
     @t1.x = 400 - @t1.width/2
     $window.caption = "You Win"
-    @music = Song["media/audio/music/end_song.ogg"]
-    @music.play(true)
-    @music.volume = 0.5
+    $music = Song["media/audio/music/end_song.ogg"]
+    $music.play(true)
+    $music.volume = 0.5
+  end
+
+  def pop
+    pop_game_state(:setup => false)
+  end
+
+  def update
+    @t1.y -= 0.5
   end
 end
 
+
+#
+#  BEGINNING GAMESTATE
+#
+class Beginning < Chingu::GameState
+  trait :timer
+  def setup
+    after (50) {
+      push_game_state(Chingu::GameStates::FadeTo.new(OpeningCredits.new, :speed => 10))
+    }
+  end
+end
 
 
 #
@@ -62,17 +93,33 @@ class OpeningCredits < Chingu::GameState
   trait :timer
   def setup
     self.input = { :esc => :exit, [:enter, :return] => Introduction, :p => Pause, :r => lambda{current_game_state.setup} }
-    @text = Chingu::Text.create("Press enter at any time", :y => 560, :font => "GeosansLight", :size => 16, :zorder => Zorder::GUI)
-    @text.x = 800/2 - @text.width/2
+
     $music = Song["media/audio/music/title_song.ogg"]
     $music.volume = 0.8
     $music.play(true)
-    after(600) {
-      puts "Opening Credits"
-      after(600) {
-        push_game_state(Introduction)
+
+    @white = Colors::White#Color.new(0xFFFFFFFF)
+    @black = Color.new(0xFF000000)
+#    @text = Chingu::Text.create("press enter to skip intro", :y => 560, :font => "GeosansLight", :size => 18, :color => @black, :zorder => Zorder::GUI)
+#    @text.x = 800/2 - @text.width/2
+    @logo = GosuLogo.create(:x => 400, :y => 300)
+
+    after(500) {
+      @beam = Highlight.create(:x => 200, :y => 300)
+      after(200) {
+        @beam2 = Highlight2.create(:x => 200, :y => 300)
+        @beam3 = Highlight.create(:x => -100, :y => 300)
+        after (3200) {
+          push_game_state(Chingu::GameStates::FadeTo.new(Introduction.new, :speed => 10))
+        }
       }
     }
+  end
+
+  def draw
+#    fill(@white)
+    Image["../media/assets/blank.png"].draw(0, 0, 0)
+    super
   end
 end
 
@@ -87,18 +134,6 @@ class Introduction < Chingu::GameState
     super
     self.input = { [:enter, :return] => :next, :p => Pause, :r => lambda{current_game_state.setup} }
     puts "Introduction"
-
-
-
-    @click = Sound["media/audio/keypress.OGG"]
-#    @text = Chingu::Text.create("Welcome to ChinguRoids", :y => 600/4, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
-#    @text.x = 800/2 - @text.width/2
-
-#    @text2 = Chingu::Text.create("Press ENTER to play", :y => 600/4+600/4, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
-#    @text2.x =800/2 - @text2.width/2
-
-#    @player = Player.create(:x => 400, :y => 450, :zorder => Zorder::Main_Character)
-#    self.input = {:return => :next}
   end
 
   def setup
@@ -107,11 +142,14 @@ class Introduction < Chingu::GameState
     Meteor.destroy_all
     $window.caption = "chinguroids"
     @counter = 0
+    @count = 1
+    @knight = Knight.create(:x=>900,:y=>300)
+    @click = Sound["media/audio/pickup_chime.ogg"]
     after(600) {
-      @text = Chingu::Text.create("Welcome to ChinguRoids", :y => 600/4, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
+      @text = Chingu::Text.create("Welcome to ChinguRoids", :y => 60, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
       @text.x = 800/2 - @text.width/2
       after(600) {
-        @text2 = Chingu::Text.create("Press ENTER to play", :y => 600/4+600/4, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
+        @text2 = Chingu::Text.create("Press ENTER to play", :y => 510, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
         @text2.x =800/2 - @text2.width/2
         after(600) {
           @player = Player.create(:x => 400, :y => 450, :zorder => Zorder::Main_Character)
@@ -119,26 +157,10 @@ class Introduction < Chingu::GameState
       }
     }
   end
-=begin
-  def pop
-    if $window.current_game_state.to_s != "Pause" && $window.current_game_state.to_s != "GameOver" then
-      if @ng == 0
-        @ng = 13
-      else
-        @ng -= 1
-      end
-    end
-    if $window.current_game_state.to_s != "Introduction" then
-      pop_game_state(:setup => false)
-    end
-    if $window.current_game_state.to_s == "Introduction" then
-      @ng = -1
-    end
-  end
-=end
+
   def update
     super
-    @counter += 1
+    @counter += @count
 
     if(@counter >= 150)
       @random = rand(4)+1
@@ -169,9 +191,36 @@ class Introduction < Chingu::GameState
 
   def next
     @click.play
-    $music.stop
-    push_game_state(Level_1)
+    after(200) {
+      if @text2 != nil; @text2.destroy; end
+#      @text.destroy
+      after(200) {
+        if @text != nil; @text.destroy; end
+#        @text2.destroy
+        after(200) {
+          @count = 0
+          @knight.movement
+          after (1400) {
+            @knight.speak
+            after(2800) {
+              @knight.enter_ship
+              after(2800) {
+                $music.stop
+                push_game_state(Level_1)
+              }
+            }
+          }
+        }
+      }
+    }
+
   end
+
+  def draw
+    Image["../media/assets/background.png"].draw(0, 0, 0)    # Background Image: Raw Gosu Image.draw(x,y,zorder)-call
+    super
+  end
+
 end
 
 

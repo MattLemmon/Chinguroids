@@ -29,31 +29,31 @@ end
 #
 class GameWindow < Chingu::Window
   def initialize
-  @NAME = "ChinguRoids"
-  $max_x = 815
-  $max_y = 615
-  $scr_edge = 15
-  $cooling_down = 70
-
     super(800,600,false)
-    self.caption = @NAME
+#    @NAME = "ChinguRoids"
+    $max_x = 815
+    $max_y = 615
+    $scr_edge = 15
+    $cooling_down = 70
+    self.caption = "ChinguRoids"
     @cursor = true # comment out to hide cursor
     self.input = { :esc => :exit,
 #                   :enter => :next,
 #                   :return => :next,
-                   [:q, :l] => :pop,
-                   :z => :log,
-                   :r => lambda{current_game_state.setup}
-                 }
-    @nextgame = [ OpeningCredits, Introduction, Level_1, Level_2, Level_3, Win, GameOver ]
-    @w = true
-    @ng = -1
+                 [:q, :l] => :pop,
+                 :z => :log,
+                 :r => lambda{current_game_state.setup}
+               }
+#    @nextgame = [ OpeningCredits, Introduction, Level_1, Level_2, Level_3, Win, GameOver ]
+#    @w = true
+#    @ng = -1
+#    transitional_game_state(Chingu::GameStates::FadeTo, {:speed => 5, :debug => true})
     retrofy
   end
 
   def setup
 #    retrofy
-    push_game_state(OpeningCredits)
+    push_game_state(Beginning)
   end
 
   def log

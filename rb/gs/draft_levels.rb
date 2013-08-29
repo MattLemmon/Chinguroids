@@ -1,4 +1,153 @@
 #
+#  OPENING CREDITS GAMESTATE
+#
+class OpeningCredits < Chingu::GameState
+  trait :timer
+  def setup
+    self.input = { :esc => :exit, [:enter, :return] => Introduction, :p => Pause, :r => lambda{current_game_state.setup} }
+
+    $music = Song["media/audio/music/title_song.ogg"]
+    $music.volume = 0.8
+    $music.play(true)
+
+    @white = Colors::White#Color.new(0xFFFFFFFF)
+    @black = Color.new(0xFF000000)
+    @text = Chingu::Text.create("press enter to skip intro", :y => 560, :font => "GeosansLight", :size => 18, :color => @black, :zorder => Zorder::GUI)
+    @text.x = 800/2 - @text.width/2
+    @logo = GosuLogo.create(:x => 400, :y => 300)
+
+
+
+    after(600) {
+#      @text = Chingu::Text.create("press enter to skip intro", :y => 560, :font => "GeosansLight", :size => 18, :color => @black, :zorder => Zorder::GUI)
+#      @text.x = 800/2 - @text.width/2
+      puts "hello"
+      after(600) {
+#        @logo = GosuLogo.create(:x => 400, :y => 300)
+        after(600) {
+          @beam = Highlight.create(:x => 200, :y => 300)
+          after(5000) {
+            push_game_state(Introduction)
+          }
+        }
+      }
+    }
+  end
+
+  def draw
+#    fill(@white)
+    Image["../media/assets/blank.png"].draw(0, 0, 0)
+    super
+  end
+end
+
+
+
+
+
+
+
+
+
+#
+#  LEVEL_1 GAMESTATE
+#
+class Level_1 < Chingu::GameState
+  def initialize
+    super
+    $health = 6
+    $score = 0
+    self.input = {:esc => :exit, :p => Pause, [:enter, :return] => Level_2, :c => :count_meteors  }
+    @music = Song["media/audio/music/end_song.ogg"]
+  end
+
+  def setup
+    super
+    Bullet.destroy_all
+    Player.destroy_all
+    Star.destroy_all
+    Meteor.destroy_all
+    Explosion.destroy_all
+    if @player != nil; @player.destroy; end
+
+    @player = Player.create(:x => 400, :y => 450, :zorder => Zorder::Main_Character)
+    @player.input = {:holding_left => :turn_left, :holding_right => :turn_right, :holding_up => :accelerate, :holding_down => :brake, :space => :fire}
+
+    @gui = GUI.create(@player)
+
+    Sound["media/audio/asplode.ogg"]  # cache sound
+    Sound["media/audio/exploded.ogg"]
+    @music.play(true)
+    @music.volume = 0.16
+
+    6.times { new_meteor }
+  end
+
+  def count_meteors
+    puts Meteor.size
+  end
+
+  def new_meteor
+    Star.create
+    2.times { meteor_cases }
+  end
+
+  def meteor_cases
+    @random = rand(4)+1
+    case @random
+    when 1
+      Meteor.create(x: rand(800)+1, y: 0,
+              velocity_y: rand(5)+1, velocity_x: rand(-5..5),
+              :factor => rand(0.5)+0.4, :zorder => Zorder::Object)
+    when 2
+      Meteor.create(x: rand(800)+1, y: 600,
+              velocity_y: rand(1..5)*-1, velocity_x: rand(-5..5),
+                :factor => rand(0.5)+0.4, :zorder => Zorder::Object)
+    when 3
+      Meteor.create(x: 0, y: rand(600)+1,
+              velocity_x: rand(1..5), velocity_y: rand(-5..5),
+                :factor => rand(0.5)+0.4, :zorder => Zorder::Object)
+    when 4
+      Meteor.create(x: 800, y: rand(600)+1,
+              velocity_x: rand(1..5)*-1, velocity_y: rand(-5..5),
+              :factor => rand(0.5)+0.4, :zorder => Zorder::Object)
+    end
+  end
+
+  def draw
+    Gosu::Image["assets/background.png"].draw(0, 0, 0)
+    super
+  end
+
+  def update
+    super
+    check_for_collision
+    $player_x, $player_y, $player_angle = @player.x, @player.y, @player.angle  #save player's position for next level
+    if Meteor.size == 0
+      push_game_state(Level_2)
+    end
+  end
+
+
+  def check_for_collision
+    Bullet.each_collision(Meteor) do |projectile, meteor|
+      Explosion.create(:x => meteor.x, :y => meteor.y)
+      meteor.destroy
+      projectile.destroy
+      $score += 100
+      Sound["media/audio/explosion.ogg"].play(0.2)
+    end
+    Player.each_collision(Meteor) do |player, meteor|
+      @player.damage
+    end
+  end
+end
+
+
+
+
+
+#
 #   LEVEL 2 GAMESTATE
 #
 class Level_2 < Chingu::GameState
