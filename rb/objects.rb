@@ -21,6 +21,7 @@ class Player < Chingu::GameObject
   	@max_y = $max_y
   	@scr_edge = $scr_edge
     @cooling_down = $cooling_down
+    @blink = 20
 	end
 
   def damage
@@ -56,25 +57,35 @@ class Player < Chingu::GameObject
 		Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
 	end
 
+  def blink
+    if @blink == 20
+      @image = Gosu::Image["assets/player_blink.png"]
+      @blink = 0
+    elsif @blink == 10
+      @image = Gosu::Image["assets/player.png"]
+      @blink +=1
+    else
+      @blink +=1
+    end
+  end
+
+
   def update
     self.velocity_x *= 0.99
     self.velocity_y *= 0.99
 
-    if @cooling_down != 0
+    if @cooling_down != 0  # player cannot be damaged during cool down
       @cooling_down -= 1
+      blink
+#      @image = Gosu::Image["assets/player_blink.png"]
+    else
+      @image = Gosu::Image["assets/player.png"]
     end
-    if @x < -@scr_edge     # wrap around beyond screen edges
-      @x = @max_x
-    end
-    if @y < -@scr_edge
-      @y = @max_y
-    end
-    if @x > @max_x
-      @x = -@scr_edge
-    end
-    if @y > @max_y
-      @y = -@scr_edge
-    end
+
+    if @x < -@scr_edge; @x = @max_x; end  # wrap around beyond screen edges
+    if @y < -@scr_edge; @y = @max_y; end
+    if @x > @max_x; @x = -@scr_edge; end
+    if @y > @max_y; @y = -@scr_edge; end
 
   # Particle -- Remember to fix the color error
 		Chingu::Particle.create(:x => @x, :y => @y,
