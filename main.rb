@@ -2,8 +2,7 @@ require 'chingu'
 include Gosu
 
 require_relative 'rb/welcome.rb'
-require_relative 'rb/pause.rb'
-require_relative 'rb/gamestates.rb'
+require_relative 'rb/levels.rb'
 require_relative 'rb/objects.rb'
 require_relative 'rb/gui.rb'
 
@@ -30,7 +29,7 @@ end
 #
 class GameWindow < Chingu::Window
   def initialize
-  @NAME = "ChinguRoids 0.01 - Fractional"
+  @NAME = "ChinguRoids"
   $max_x = 815
   $max_y = 615
   $scr_edge = 15
@@ -40,20 +39,21 @@ class GameWindow < Chingu::Window
     self.caption = @NAME
     @cursor = true # comment out to hide cursor
     self.input = { :esc => :exit,
-                   :enter => :next,
-                   :return => :next,
+#                   :enter => :next,
+#                   :return => :next,
                    [:q, :l] => :pop,
                    :z => :log,
                    :r => lambda{current_game_state.setup}
                  }
-    @nextgame = [ Level_1, Level_2, Level_3, Welcome ]
+    @nextgame = [ OpeningCredits, Introduction, Level_1, Level_2, Level_3, Win, GameOver ]
     @w = true
     @ng = -1
+    retrofy
   end
 
   def setup
-    retrofy
-    push_game_state(Introduction)
+#    retrofy
+    push_game_state(OpeningCredits)
   end
 
   def log
@@ -61,7 +61,7 @@ class GameWindow < Chingu::Window
   end
 
   def next
-    if @ng == 3
+    if @ng == 6
       @ng = 0
     else
         @ng += 1
@@ -70,19 +70,24 @@ class GameWindow < Chingu::Window
   end
 
   def pop
-    if $window.current_game_state.to_s != "Pause" && $window.current_game_state.to_s != "GameOver" then
-      if @ng == 0
-        @ng = 13
-      else
-        @ng -= 1
-      end
-    end
-    if $window.current_game_state.to_s != "Introduction" then
+#    if $window.current_game_state.to_s != "Pause"# && $window.current_game_state.to_s != "OpenCredits" then
+#      if @ng == 0
+#        @ng = 6
+#      else
+#        @ng -= 1
+#      end
+#    end
+    if $window.current_game_state.to_s == "Introduction" or $window.current_game_state.to_s == "Level_1" then
+      pop_game_state(:setup => true)
+    elsif $window.current_game_state.to_s != "OpeningCredits"
       pop_game_state(:setup => false)
     end
-    if $window.current_game_state.to_s == "Introduction" then
-      @ng = -1
-    end
+#    if $window.current_game_state.to_s != "OpeningCredits" && $window.current_game_state.to_s != "Introduction" then
+#      pop_game_state(:setup => false)
+#    else # $window.current_game_state.to_s == "Introduction" then
+#      pop_game_state(:setup => true)
+#      @ng = -1
+#    end
   end
 end
 

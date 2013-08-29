@@ -12,33 +12,35 @@ class Player < Chingu::GameObject
 		super
 		@image = Gosu::Image["assets/player.png"]
 		@width, @height = 32, 32
-		@speed, @rotate_speed = 5, 5
+		@max_speed, @speed, @part_speed, @rotate_speed = 12, 0.3, 5, 5
 #		$health = 6
 
 #		@shoot = Gosu::Sample.new($window, "media/sfx/laser.OGG")
-        @shoot = Sound["media/audio/laser.OGG"]
-      @max_x = $max_x#825
-    	@max_y = $max_y#625
-    	@scr_edge = $scr_edge#25
-      @cooling_down = $cooling_down#70
+    @shoot = Sound["media/audio/laser.OGG"]
+    @max_x = $max_x
+  	@max_y = $max_y
+  	@scr_edge = $scr_edge
+    @cooling_down = $cooling_down
 	end
 
   def damage
     if @cooling_down == 0
-      @cooling_down = $cooling_down#70
+      @cooling_down = $cooling_down
       $health -= 1
       Sound["media/audio/exploded.ogg"].play(0.2)
     end
   end
 
 	def accelerate
-		self.velocity_x = Gosu::offset_x(self.angle, @speed)
-		self.velocity_y = Gosu::offset_y(self.angle, @speed)
+    if self.velocity_x <= @max_speed and self.velocity_y <= @max_speed
+  		self.velocity_x += Gosu::offset_x(self.angle, @speed)
+	  	self.velocity_y += Gosu::offset_y(self.angle, @speed)
+    end
 	end
 
 	def brake
-		self.velocity_x *= 0.7
-		self.velocity_y *= 0.7
+		self.velocity_x *= 0.95
+		self.velocity_y *= 0.95
 	end
 
 	def turn_left
@@ -55,6 +57,9 @@ class Player < Chingu::GameObject
 	end
 
     def update
+      self.velocity_x *= 0.99
+      self.velocity_y *= 0.99
+
       if @cooling_down != 0
         @cooling_down -= 1
       end
@@ -71,8 +76,7 @@ class Player < Chingu::GameObject
         @y = -@scr_edge
       end
 
-		self.velocity_x *= 0.91
-		self.velocity_y *= 0.91
+
 
 		# Particle -- Remember to fix the color error
 		Chingu::Particle.create(:x => @x, :y => @y,
@@ -83,7 +87,7 @@ class Player < Chingu::GameObject
 								:angle => @angle,
 								:zorder => Zorder::Main_Character_Particles)
 
-		Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @speed); particle.x -= Gosu::offset_x(@angle, @speed)}
+		Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @part_speed); particle.x -= Gosu::offset_x(@angle, @part_speed)}
 		Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
   end
 end
@@ -128,7 +132,7 @@ class Bullet < Chingu::GameObject
     if @y < -@scr_edge; @y = @max_y; end
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
-    after(650) {self.destroy}
+    after(550) {self.destroy}
 	end
 end
 
@@ -171,6 +175,7 @@ class Meteor < Chingu::GameObject
 
 	def initialize(options)
 		super(options.merge(:image => Gosu::Image["assets/meteor.png"]))
+#    self.zorder = 500
 		@angular_velocity = 5
     @max_x, @max_y, @scr_edge = 825, 625, 25
 		@random = rand(2)+1
@@ -196,8 +201,9 @@ class Meteor1 < Chingu::GameObject
   traits :velocity, :collision_detection
 
   def setup
-    @image = Image["media/assets/meteor1.png"]
+    @image = Image["media/assets/meteor5.png"]
     self.zorder = 500
+#    self.factor = 3
 #    self.x = rand * 800
 #    self.y = rand * 600
     self.velocity_x = (3 - rand * 6) * 2
@@ -205,11 +211,21 @@ class Meteor1 < Chingu::GameObject
     @max_x, @max_y, @scr_edge = 825, 625, 25
     @angle = rand(360)
     @rotate = rand(10) + 5
-    if rand(2) == 1
-      @rotate *= -1
-    end
-#    if @rotate == 0; @rotate = 6; end
+#    meteor_cases
+    if @rotate == 0; @rotate = 6; end
+    if rand(2) == 1; @rotate *= -1; end
+#    meteor_placement
     cache_bounding_circle
+  end
+
+  def meteor_placement
+    if rand(2) == 1
+      self.x = 0
+      self.y = rand(600)
+    else
+      self.x = rand(800)
+      self.y = 0
+    end
   end
 
   def update
@@ -233,15 +249,17 @@ class Meteor2 < Chingu::GameObject
   traits :velocity, :collision_detection
 
   def setup
-    @image = Image["media/assets/meteor2.png"]
+    @image = Image["media/assets/meteor.png"]
     self.zorder = 500
+#    self.factor = 1
 #    self.x = rand * 800
 #    self.y = rand * 600
-    self.velocity_x = (3 - rand * 6) * 3
-    self.velocity_y = (3 - rand * 6) * 3
+    self.velocity_x = (3 - rand * 6) * 2
+    self.velocity_y = (3 - rand * 6) * 2
     @angle = rand(360)
     @rotate = 5 - rand(10)
     @max_x, @max_y, @scr_edge = 825, 625, 25
+#    meteor_placement
     cache_bounding_circle
   end
 
@@ -266,16 +284,18 @@ class Meteor3 < Chingu::GameObject
   traits :velocity, :collision_detection
 
   def setup
-    @image = Image["media/assets/meteor3.png"]
+    @image = Image["media/assets/meteor6.png"]
     self.zorder = 500
+#    self.factor = 0.9
 #    self.x = rand * 800
 #    self.y = rand * 600
-    self.velocity_x = (3 - rand * 6) * 3
-    self.velocity_y = (3 - rand * 6) * 3
+    self.velocity_x = (3 - rand * 6) * 2.5
+    self.velocity_y = (3 - rand * 6) * 2.5
     @angle = rand(360)
     @rotate = 5 - rand(10)
     @max_x, @max_y, @scr_edge = 825, 625, 25
-    cache_bounding_circle
+#    meteor_placement
+#    cache_bounding_circle
   end
 
   def update
