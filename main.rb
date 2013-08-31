@@ -1,10 +1,11 @@
 require 'chingu'
 include Gosu
 
-require_relative 'rb/welcome.rb'
+require_relative 'rb/beginning.rb'
 require_relative 'rb/levels.rb'
 require_relative 'rb/objects.rb'
 require_relative 'rb/gui.rb'
+require_relative 'rb/ending.rb'
 
 module Zorder
 	GUI = 400
@@ -23,7 +24,6 @@ module Colors
 end
 
 
-#
 #
 #  GameWindow Class
 #
@@ -50,7 +50,6 @@ class GameWindow < Chingu::Window
   end
 
   def setup
-#    retrofy
     push_game_state(Beginning)
   end
 
@@ -70,7 +69,6 @@ class GameWindow < Chingu::Window
     end
   end
 end
-
 
 
 GameWindow.new.show # change to Game.new.show to see alternate window class
