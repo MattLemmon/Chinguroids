@@ -10,18 +10,19 @@ class Player < Chingu::GameObject
 	traits :velocity, :collision_detection
 	def initialize(health)
 		super
-		@image = Gosu::Image["assets/player.png"]
+    @picture1 = Gosu::Image["assets/player.png"]
+    @picture2 = Gosu::Image["assets/player_blink.png"]
 		@width, @height = 32, 32
 		@max_speed, @speed, @part_speed, @rotate_speed = 12, 0.4, 7, 5
-#		$health = 6
 
-#		@shoot = Gosu::Sample.new($window, "media/sfx/laser.OGG")
     @shoot = Sound["media/audio/laser.OGG"]
     @max_x = $max_x
   	@max_y = $max_y
   	@scr_edge = $scr_edge
     @cooling_down = $cooling_down
-    @blink = 20
+    @blink = 14
+#    @x_weapons = 0
+#    @y_weapons = 0
 	end
 
   def damage
@@ -55,20 +56,34 @@ class Player < Chingu::GameObject
 	def fire
 		@shoot.play(rand(0.05..0.1))
 		Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
-	end
+    if $weapon >= 2
+     if @angle <= 90
+        Bullet.create(:x => @x + 20 - @angle / 4.5, :y => @y + @angle / 4.5, :angle => @angle, :zorder => Zorder::Projectile)
+        Bullet.create(:x => @x - 20 + @angle / 4.5, :y => @y - @angle / 4.5, :angle => @angle, :zorder => Zorder::Projectile)
+      elsif @angle <= 180
+        Bullet.create(:x => @x + 20 - @angle / 9, :y => @y + @angle / 9, :angle => @angle, :zorder => Zorder::Projectile)
+        Bullet.create(:x => @x - 20 + @angle / 9, :y => @y - @angle / 9, :angle => @angle, :zorder => Zorder::Projectile)
+      elsif @angle <= 270
+        Bullet.create(:x => @x + 20 - @angle / 13.5, :y => @y + @angle / 13.5, :angle => @angle, :zorder => Zorder::Projectile)
+        Bullet.create(:x => @x - 20 + @angle / 13.5, :y => @y - @angle / 13.5, :angle => @angle, :zorder => Zorder::Projectile)
+      else
+        Bullet.create(:x => @x + 20 - @angle / 18, :y => @y + @angle / 18, :angle => @angle, :zorder => Zorder::Projectile)
+        Bullet.create(:x => @x - 40 + @angle / 18, :y => @y - @angle / 18, :angle => @angle, :zorder => Zorder::Projectile)
+      end
+    end
+  end
 
   def blink
-    if @blink == 20
-      @image = Gosu::Image["assets/player_blink.png"]
+    if @blink == 14
+      @image = @picture2
       @blink = 0
-    elsif @blink == 10
-      @image = Gosu::Image["assets/player.png"]
+    elsif @blink == 7
+      @image = @picture1
       @blink +=1
     else
       @blink +=1
     end
   end
-
 
   def update
     self.velocity_x *= 0.99
@@ -77,9 +92,8 @@ class Player < Chingu::GameObject
     if @cooling_down != 0  # player cannot be damaged during cool down
       @cooling_down -= 1
       blink
-#      @image = Gosu::Image["assets/player_blink.png"]
     else
-      @image = Gosu::Image["assets/player.png"]
+      @image = @picture1
     end
 
     if @x < -@scr_edge; @x = @max_x; end  # wrap around beyond screen edges
@@ -130,8 +144,6 @@ class Bullet < Chingu::GameObject
 		self.velocity_x = Gosu::offset_x(@angle, @speed)
 		self.velocity_y = Gosu::offset_y(@angle, @speed)
     @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
-#    @max_y = $max_y
-#    @scr_edge = $scr_edge
 	end
 
 	def update
@@ -153,7 +165,7 @@ class Star < Chingu::GameObject
   trait :collision_detection
   
   def setup
-    @animation = Chingu::Animation.new(:file => "../media/assets/Star.png", :size => 25)
+    @animation = Chingu::Animation.new(:file => "../media/assets/living.png", :size => 64)
     @image = @animation.next
     self.zorder = 200
     self.color = Gosu::Color.new(0xff000000)
@@ -180,11 +192,9 @@ end
 class Meteor < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
   traits :velocity, :collision_detection
-#	has_traits :velocity, :collision_detection, :bounding_circle
 
 	def initialize(options)
 		super(options.merge(:image => Gosu::Image["assets/meteor.png"]))
-#    self.zorder = 500
 		@angular_velocity = 5
     @max_x, @max_y, @scr_edge = 825, 625, 25
 		@random = rand(2)+1
@@ -203,27 +213,22 @@ class Meteor < Chingu::GameObject
 end
 
 #
-#   METEOR - BIG
+#   METEOR 1 - BIG
 #
 class Meteor1 < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
   traits :velocity, :collision_detection
 
   def setup
-    @image = Image["media/assets/meteor5.png"]
+    @image = Image["media/assets/meteor2.png"]
     self.zorder = 500
-#    self.factor = 3
-#    self.x = rand * 800
-#    self.y = rand * 600
     self.velocity_x = (3 - rand * 6) * 2
     self.velocity_y = (3 - rand * 6) * 2
     @max_x, @max_y, @scr_edge = 825, 625, 25
     @angle = rand(360)
     @rotate = rand(10) + 5
-#    meteor_cases
     if @rotate == 0; @rotate = 6; end
     if rand(2) == 1; @rotate *= -1; end
-#    meteor_placement
     cache_bounding_circle
   end
 
@@ -245,9 +250,6 @@ class Meteor1 < Chingu::GameObject
     if @y > @max_y; @y = -@scr_edge; end
   end
 
-  def draw
-    @image.draw_rot(@x, @y, 1, @angle)
-  end
 end
 
 #
@@ -261,14 +263,11 @@ class Meteor2 < Chingu::GameObject
     @image = Image["media/assets/meteor.png"]
     self.zorder = 500
 #    self.factor = 1
-#    self.x = rand * 800
-#    self.y = rand * 600
     self.velocity_x = (3 - rand * 6) * 2
     self.velocity_y = (3 - rand * 6) * 2
     @angle = rand(360)
     @rotate = 5 - rand(10)
     @max_x, @max_y, @scr_edge = 825, 625, 25
-#    meteor_placement
     cache_bounding_circle
   end
 
@@ -280,9 +279,6 @@ class Meteor2 < Chingu::GameObject
     if @y > @max_y; @y = -@scr_edge; end
   end
 
-  def draw
-    @image.draw_rot(@x, @y, 1, @angle)
-  end
 end
 
 #
@@ -293,18 +289,15 @@ class Meteor3 < Chingu::GameObject
   traits :velocity, :collision_detection
 
   def setup
-    @image = Image["media/assets/meteor6.png"]
+    @image = Image["media/assets/meteor3.png"]
     self.zorder = 500
 #    self.factor = 0.9
-#    self.x = rand * 800
-#    self.y = rand * 600
     self.velocity_x = (3 - rand * 6) * 2.5
     self.velocity_y = (3 - rand * 6) * 2.5
     @angle = rand(360)
     @rotate = 5 - rand(10)
     @max_x, @max_y, @scr_edge = 825, 625, 25
-#    meteor_placement
-#    cache_bounding_circle
+    cache_bounding_circle
   end
 
   def update
@@ -315,17 +308,33 @@ class Meteor3 < Chingu::GameObject
     if @y > @max_y; @y = -@scr_edge; end
   end
 
-  def draw
-    @image.draw_rot(@x, @y, 1, @angle)
-  end
 end
 
 #
-#  GOSU LOGO
+#  SPARKLE
 #
-class GosuLogo < Chingu::GameObject
+class Sparkle < Chingu::GameObject
   def setup
-    @image = Image["media/assets/gosu.png"]
+    @image = Image["media/assets/sparkle.png"]
+    self.factor = 0.1
+    @turning = 0.5
+    @factoring = 1.0
+    @angle = 35
+  end
+
+  def turnify1; @turning = 0.5; @factoring = 1.2;   end
+  def turnify2; @turning = 0.5; @factoring = 1.02;  end
+  def turnify3; @turning = 0.49; @factoring = 1.0;  end
+  def turnify4; @turning = 0.47; @factoring = 1.0;  end
+  def turnify5; @turning = 0.45; @factoring = 1.0;  end
+  def turnify6; @turning = 0.43; @factoring = 1.0;  end
+
+  def update
+    @angle += @turning
+    self.factor *= @factoring
+    if self.factor >= 1.1
+      @factoring = 1.0
+    end
   end
 end
 
@@ -360,14 +369,11 @@ class Knight < Chingu::GameObject
   trait :timer
   def initialize(options)
     super
-#    self.factor = 0.99
     @image = Image["media/assets/knight.png"]
-    @voice = Sound["media/audio/mumble1.ogg"]
-    @voice2 = Sound["media/audio/mumble2.ogg"]
+    @voice = Sound["media/audio/mumble.ogg"]
     @velox = 0
     @veloy = 0
     @factoring = 1
-
   end
 
   def movement
@@ -381,9 +387,6 @@ class Knight < Chingu::GameObject
 
   def speak
     @voice.play
-    after (800) {
-      @voice2.play
-    }
   end
 
   def update
@@ -393,8 +396,4 @@ class Knight < Chingu::GameObject
     if @x <= 400; @velox = 0; end
     if @y >= 450; @veloy = 0; end
   end
-
-#  def draw
-#    @image.draw_rot(@x, @y, 1, @angle)
-#  end
 end
