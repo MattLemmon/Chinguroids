@@ -13,7 +13,7 @@ class Player < Chingu::GameObject
     @picture1 = Gosu::Image["assets/player.png"]
     @picture2 = Gosu::Image["assets/player_blink.png"]
 		@width, @height = 32, 32
-		@max_speed, @speed, @part_speed, @rotate_speed = 12, 0.4, 7, 5
+		@max_speed, @speed, @part_speed, @rotate_speed = 10, 0.4, 7, 5
 
     @shoot = Sound["media/audio/laser.OGG"]
     @max_x = $max_x
@@ -34,15 +34,15 @@ class Player < Chingu::GameObject
   end
 
 	def accelerate
-    if self.velocity_x <= @max_speed and self.velocity_y <= @max_speed
+    if self.velocity_x <= @max_speed && self.velocity_y <= @max_speed
   		self.velocity_x += Gosu::offset_x(self.angle, @speed)
 	  	self.velocity_y += Gosu::offset_y(self.angle, @speed)
     end
 	end
 
 	def brake
-		self.velocity_x *= 0.9
-		self.velocity_y *= 0.9
+		self.velocity_x *= 0.88
+		self.velocity_y *= 0.88
 	end
 
 	def turn_left
@@ -57,6 +57,7 @@ class Player < Chingu::GameObject
 		@shoot.play(rand(0.05..0.1))
 		Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
     if $weapon >= 2
+#     Bullet.create(:x => @x + Gosu::offset_x(@angle, 100), :y => @y + Gosu::offset_y(@angle, -10), :angle => @angle, :zorder => Zorder::Projectile)
      if @angle <= 90
         Bullet.create(:x => @x + 20 - @angle / 4.5, :y => @y + @angle / 4.5, :angle => @angle, :zorder => Zorder::Projectile)
         Bullet.create(:x => @x - 20 + @angle / 4.5, :y => @y - @angle / 4.5, :angle => @angle, :zorder => Zorder::Projectile)
@@ -220,7 +221,8 @@ class Meteor1 < Chingu::GameObject
   traits :velocity, :collision_detection
 
   def setup
-    @image = Image["media/assets/meteor2.png"]
+    @image = Image["media/assets/meteor.png"]
+    self.factor = 1.52
     self.zorder = 500
     self.velocity_x = (3 - rand * 6) * 2
     self.velocity_y = (3 - rand * 6) * 2
@@ -262,7 +264,7 @@ class Meteor2 < Chingu::GameObject
   def setup
     @image = Image["media/assets/meteor.png"]
     self.zorder = 500
-#    self.factor = 1
+    self.factor = 1.16
     self.velocity_x = (3 - rand * 6) * 2
     self.velocity_y = (3 - rand * 6) * 2
     @angle = rand(360)
@@ -289,9 +291,9 @@ class Meteor3 < Chingu::GameObject
   traits :velocity, :collision_detection
 
   def setup
-    @image = Image["media/assets/meteor3.png"]
+    @image = Image["media/assets/meteor.png"]
     self.zorder = 500
-#    self.factor = 0.9
+    self.factor = 0.78
     self.velocity_x = (3 - rand * 6) * 2.5
     self.velocity_y = (3 - rand * 6) * 2.5
     @angle = rand(360)

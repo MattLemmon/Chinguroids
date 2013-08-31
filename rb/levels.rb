@@ -47,6 +47,7 @@ class Level_1 < Chingu::GameState
     Meteor3.create(:x => rand * 800, :y => rand * 600)
     Star.create
     Star.create
+    Star.create
   end
 
   def collision_check
@@ -158,6 +159,7 @@ class Level_2 < Chingu::GameState
     Meteor2.create(:x => rand * 800, :y => rand * 600)
     Meteor3.create(:x => rand * 800, :y => rand * 600)
     Star.create
+    Star.create
   end
 
   def draw
@@ -267,6 +269,7 @@ class Level_3 < Chingu::GameState
     Meteor1.create(:x => rand * 800, :y => rand * 600)
     Meteor2.create(:x => rand * 800, :y => rand * 600)
     Meteor3.create(:x => rand * 800, :y => rand * 600)
+    Star.create
     Star.create
   end
 
