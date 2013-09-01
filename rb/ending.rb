@@ -173,20 +173,22 @@ class EndCredits < Chingu::GameState
     @t4.x = 400 - @t4.width/2
     @t5 = Chingu::Text.create(:text=>"Ruby by Yukihiro Matsumoto" , :y=>@st+@sp*5, :size=>40, :font => "GeosansLight")
     @t5.x = 400 - @t5.width/2
-    @t6 = Chingu::Text.create(:text=>"Intro Music borrowed from starry-knight by gitorious" , :y=>@st+@sp*6, :size=>40, :font => "GeosansLight")
+    @t6 = Chingu::Text.create(:text=>"Intro Music borrowed from StarryKnight/Metro by burtlo" , :y=>@st+@sp*6, :size=>40, :font => "GeosansLight")
     @t6.x = 400 - @t6.width/2
-    @t7 = Chingu::Text.create(:text=>"Game Music borrowed from Stageoids by ______ " , :y=>@st+@sp*7, :size=>40, :font => "GeosansLight")
+    @t7 = Chingu::Text.create(:text=>"Game Music borrowed from Stageoids by ExplodingCookie " , :y=>@st+@sp*7, :size=>40, :font => "GeosansLight")
     @t7.x = 400 - @t7.width/2
     @t8 = Chingu::Text.create(:text=>"End Music by ______" , :y=>@st+@sp*8, :size=>40, :font => "GeosansLight")
     @t8.x = 400 - @t8.width/2
-    @t9 = Chingu::Text.create(:text=>"Some Images and Sounds borrowed from starry-knight by gitorious" , :y=>@st+@sp*9, :size=>40, :font => "GeosansLight")
+    @t9 = Chingu::Text.create(:text=>"Knight and Voice borrowed from StarryKnight/Metro by burtlo" , :y=>@st+@sp*9, :size=>40, :font => "GeosansLight")
     @t9.x = 400 - @t9.width/2
-    @t10 = Chingu::Text.create(:text=>"Some Sounds remixed from SoundBible.com" , :y=>@st+@sp*10, :size=>40, :font => "GeosansLight")
+    @t10 = Chingu::Text.create(:text=>"Some Sounds remixed from soundbible.com" , :y=>@st+@sp*10, :size=>40, :font => "GeosansLight")
     @t10.x = 400 - @t10.width/2
     @t11 = Chingu::Text.create(:text=>"Additional thanks to Spooner, lol _ o2, et al" , :y=>@st+@sp*11, :size=>40, :font => "GeosansLight")
     @t11.x = 400 - @t11.width/2
     @t12 = Chingu::Text.create(:text=>"Additional Attribution" , :y=>@st+@sp*11, :size=>40, :font => "GeosansLight")
     @t12.x = 400 - @t11.width/2
+    @t13 = Chingu::Text.create(:text=>"Additional Attribution" , :y=>@st+@sp*11, :size=>40, :font => "GeosansLight")
+    @t13.x = 400 - @t11.width/2
 
   end
 
