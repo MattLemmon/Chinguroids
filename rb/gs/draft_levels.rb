@@ -500,3 +500,62 @@ end
     end
   end
 =end
+
+#
+#  ENDING GAMESTATE
+#
+class Ending < Chingu::GameState
+  trait :timer
+  def setup
+    self.input = { :esc => :exit, [:enter, :return] => Ending2, :p => Pause, :r => lambda{current_game_state.setup} }
+
+    @player = EndPlayer.create(:x => 400, :y => 640, :angle => 0, :velocity_x => 0, :velocity_y => 0, :zorder => Zorder::Main_Character)
+    @earth = Earth1.create(:x => 400, :y => 200)
+
+    after(1000) {@earth.factorize}
+    after(4000) {@player.accelerate}
+    after(14000) {@player.shrink; @player.adjust_particles}
+    after(11000) {@earth.easing}
+    after(17000) {@player.decelerate}
+    after(30000) { push_game_state(Chingu::GameStates::FadeTo.new(Ending2.new, :speed => 10)) }
+  end
+end
+
+
+#
+#  EARTH 1
+#
+class Earth1 < Chingu::GameObject
+  def setup
+    @image = Image["media/assets/future_earth.png"]
+    self.factor = 0.0005
+    @factoring = 1.0045
+    @motion = 0.08
+    @easing = 1.0
+    @fact_ease = 0.999975
+  end
+
+  def factorize
+    @factoring = 1.0045
+  end
+
+  def fact_ease
+    @fact_ease = 0.5
+  end
+
+  def easing
+    @easing = 0.99
+  end
+
+  def update
+    @y += @motion
+    @motion *= @easing
+    self.factor *= @factoring
+    if self.factor >= 0.21
+      @factoring *= @fact_ease
+    end
+    if self.factor >= 0.31
+      @factoring = 1.0
+    end
+  end
+end

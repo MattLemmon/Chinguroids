@@ -1,7 +1,6 @@
 DEBUG = false  # Set to true to see bounding circles used for collision detection
 
 #
-#
 #  PLAYER CLASS
 #
 class Player < Chingu::GameObject
@@ -19,17 +18,33 @@ class Player < Chingu::GameObject
     @max_x = $max_x
   	@max_y = $max_y
   	@scr_edge = $scr_edge
-    @cooling_down = $cooling_down
+    @cooling_down = 0
     @blink = 14
 #    @x_weapons = 0
 #    @y_weapons = 0
 	end
+
+  def cool_down
+    @cooling_down = $cooling_down
+  end
 
   def damage
     if @cooling_down == 0
       @cooling_down = $cooling_down
       $health -= 1
       Sound["media/audio/exploded.ogg"].play(0.2)
+    end
+  end
+
+  def blink
+    if @blink == 14
+      @image = @picture2
+      @blink = 0
+    elsif @blink == 7
+      @image = @picture1
+      @blink +=1
+    else
+      @blink +=1
     end
   end
 
@@ -74,16 +89,8 @@ class Player < Chingu::GameObject
     end
   end
 
-  def blink
-    if @blink == 14
-      @image = @picture2
-      @blink = 0
-    elsif @blink == 7
-      @image = @picture1
-      @blink +=1
-    else
-      @blink +=1
-    end
+  def speedify
+    @max_speed = 50
   end
 
   def update
@@ -115,6 +122,7 @@ class Player < Chingu::GameObject
 		Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
   end
 end
+
 
 #
 #   EXPLOSION
@@ -197,7 +205,6 @@ class Meteor < Chingu::GameObject
 	def initialize(options)
 		super(options.merge(:image => Gosu::Image["assets/meteor.png"]))
 		@angular_velocity = 5
-    @max_x, @max_y, @scr_edge = 825, 625, 25
 		@random = rand(2)+1
 		if(@random == 1)
 			@angular_velocity = -@angular_velocity
@@ -206,10 +213,6 @@ class Meteor < Chingu::GameObject
 
 	def update
 		@angle += @angular_velocity
-    if @x < -@scr_edge; @x = @max_x; end
-    if @y < -@scr_edge; @y = @max_y; end
-    if @x > @max_x; @x = -@scr_edge; end
-    if @y > @max_y; @y = -@scr_edge; end
 	end
 end
 
@@ -226,7 +229,7 @@ class Meteor1 < Chingu::GameObject
     self.zorder = 500
     self.velocity_x = (3 - rand * 6) * 2
     self.velocity_y = (3 - rand * 6) * 2
-    @max_x, @max_y, @scr_edge = 825, 625, 25
+    @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
     @angle = rand(360)
     @rotate = rand(10) + 5
     if @rotate == 0; @rotate = 6; end
@@ -251,7 +254,6 @@ class Meteor1 < Chingu::GameObject
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
   end
-
 end
 
 #
@@ -269,7 +271,7 @@ class Meteor2 < Chingu::GameObject
     self.velocity_y = (3 - rand * 6) * 2
     @angle = rand(360)
     @rotate = 5 - rand(10)
-    @max_x, @max_y, @scr_edge = 825, 625, 25
+    @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
     cache_bounding_circle
   end
 
@@ -280,7 +282,6 @@ class Meteor2 < Chingu::GameObject
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
   end
-
 end
 
 #
@@ -298,7 +299,7 @@ class Meteor3 < Chingu::GameObject
     self.velocity_y = (3 - rand * 6) * 2.5
     @angle = rand(360)
     @rotate = 5 - rand(10)
-    @max_x, @max_y, @scr_edge = 825, 625, 25
+    @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
     cache_bounding_circle
   end
 
@@ -309,7 +310,6 @@ class Meteor3 < Chingu::GameObject
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
   end
-
 end
 
 #
@@ -323,14 +323,12 @@ class Sparkle < Chingu::GameObject
     @factoring = 1.0
     @angle = 35
   end
-
   def turnify1; @turning = 0.5; @factoring = 1.2;   end
   def turnify2; @turning = 0.5; @factoring = 1.02;  end
   def turnify3; @turning = 0.49; @factoring = 1.0;  end
   def turnify4; @turning = 0.47; @factoring = 1.0;  end
   def turnify5; @turning = 0.45; @factoring = 1.0;  end
   def turnify6; @turning = 0.43; @factoring = 1.0;  end
-
   def update
     @angle += @turning
     self.factor *= @factoring
@@ -377,20 +375,16 @@ class Knight < Chingu::GameObject
     @veloy = 0
     @factoring = 1
   end
-
   def movement
     @velox = -7
   end
-
   def enter_ship
     @veloy = 2
     @factoring = 0.98
   end
-
   def speak
     @voice.play
   end
-
   def update
     self.factor *= @factoring
     @x += @velox
@@ -399,3 +393,192 @@ class Knight < Chingu::GameObject
     if @y >= 450; @veloy = 0; end
   end
 end
+
+#
+#  EARTH 1
+#
+class Earth1 < Chingu::GameObject
+  def setup
+    @image = Image["media/assets/future_earth.png"]
+    self.factor = 0.002
+    @factoring = 1.0045
+    @motion = 0.0
+    @easing = 1.0
+    @fact_ease = 0.999975
+  end
+  def factorize
+    @factoring = 1.0035
+  end
+  def fact_ease
+    @fact_ease = 0.998
+  end
+  def motion
+    @motion = 0.08
+  end
+  def motion_easing
+    @easing = 0.998
+  end
+  def update
+    @y += @motion
+    @motion *= @easing
+    self.factor *= @factoring
+    if self.factor >= 0.21
+      @factoring *= @fact_ease
+    end
+    if self.factor >= 0.3142
+      @factoring = 1.0
+    end
+  end
+end
+
+
+#
+#  EARTH 2
+#
+class Earth2 < Chingu::GameObject
+  def setup
+    @image = Image["media/assets/future_earth2.png"]
+    self.factor = 1.2
+    @motion = 0.34
+    @easing = 1.0
+  end
+  def motion_easing
+    @easing = 0.998
+  end
+  def update
+    @x += @motion
+    @motion *= @easing
+  end
+end
+
+
+
+#
+#  END PLAYER
+#
+class EndPlayer < Chingu::GameObject
+  trait :bounding_circle, :debug => DEBUG
+  traits :velocity, :collision_detection
+  def setup
+    @image = Gosu::Image["assets/player.png"]
+    @width, @height = 32, 32
+    @speed = 0.34
+    @max_speed, @part_speed, @rotate_speed = 10, 8, 5
+    @shoot = Sound["media/audio/laser.OGG"]
+    @easing = 1.0
+    @shrinkage = 1.0
+    self.factor = 1.0
+    @particles_slow = 1.0
+  end
+
+  def shrink
+    @shrinkage = 0.994
+  end
+
+  def accelerate
+    if self.velocity_x <= @max_speed && self.velocity_y <= @max_speed
+      self.velocity_x += Gosu::offset_x(self.angle, @speed)
+      self.velocity_y += Gosu::offset_y(self.angle, @speed)
+    end
+  end
+
+  def decelerate
+    @easing = 0.99
+  end
+
+  def adjust_particles
+    @particles_slow = 0.997
+  end
+
+  def fire
+    @shoot.play(rand(0.05..0.1))
+    Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
+  end
+
+  def brake
+    self.velocity_x *= 0.88
+    self.velocity_y *= 0.88
+  end
+
+  def turn_left
+    self.angle -= @rotate_speed
+  end
+
+  def turn_right
+    self.angle += @rotate_speed
+  end
+
+  def update
+    self.factor *= @shrinkage
+    @part_speed *= @particles_slow
+    self.velocity_x *= @easing
+    self.velocity_y *= @easing
+
+     Chingu::Particle.create(:x => @x, :y => @y,
+            :image => "assets/particle_1.png", 
+            :color => 0xFF86EFFF, 
+            :mode => :default,
+            :fade_rate => -45,
+            :angle => @angle,
+            :factor => @factor,
+            :zorder => Zorder::Main_Character_Particles)
+
+     Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @part_speed); particle.x -= Gosu::offset_x(@angle, @part_speed)}
+     Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
+  end
+end
+
+#
+#  END PLAYER SIDE
+#
+class EndPlayerSide < Chingu::GameObject
+#  attr_reader :health, :score
+  trait :bounding_circle, :debug => DEBUG
+  traits :velocity, :collision_detection
+  def setup
+    @image = Gosu::Image["assets/player_side.png"]
+    @width, @height = 32, 32
+    @max_speed, @speed, @part_speed, @rotate_speed = 10, 0.4, 6, 5
+    @blink = 14
+    @easing = 1.0
+    @shrinkage = 1.0
+    self.factor = 1.5
+    @particles = true
+    @particles_slow = 1.0
+    @part_fact = 0.4
+    @part_offset = 15
+    @part_off_change = 1.0
+  end
+
+  def adjust_particles
+    @particles_slow = 0.999
+    @part_off_change *= 0.99999
+  end
+
+  def update
+    self.factor *= @shrinkage
+
+    @part_speed *= @particles_slow
+    @part_offset *= @part_off_change
+
+    self.velocity_x *= @easing
+    self.velocity_y *= @easing
+
+    if @particles == true
+      Chingu::Particle.create(:x => @x + @part_offset, :y => @y,
+            :image => "assets/particle_1.png", 
+            :color => 0xFF86EFFF, 
+            :mode => :default,
+            :fade_rate => -25,
+            :angle => @angle,
+            :factor => @factor * @part_fact,
+            :zorder => Zorder::Main_Character_Particles)
+
+      Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @part_speed); particle.x -= Gosu::offset_x(@angle, @part_speed)}
+      Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
+    end
+  end
+
+end
+
+

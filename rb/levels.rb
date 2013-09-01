@@ -11,7 +11,7 @@ class Level_1 < Chingu::GameState
     $stars = 0
     $weapon = 1
     self.input = { [:enter, :return] => Level_2, :p => Pause, :r => lambda{ current_game_state.setup } }
-    $music = Song["media/audio/music/stageoids.ogg"]
+    $music.stop
   end
 
   def setup
@@ -30,12 +30,14 @@ class Level_1 < Chingu::GameState
     @player.input = {:holding_left => :turn_left, :holding_right => :turn_right, :holding_up => :accelerate, :holding_down => :brake, :space => :fire}
     @gui = GUI.create(@player)
 
+    $music = Song["media/audio/music/stageoids.ogg"]
     Sound["media/audio/asplode.ogg"]  # cache sound
     Sound["media/audio/exploded.ogg"]
 
+    @player.cool_down
     1.times { new_meteor }
 
-    after(500) {
+    after(100) {
       $music.play(true)
       $music.volume = 0.25
     }
@@ -151,7 +153,9 @@ class Level_2 < Chingu::GameState
     Sound["media/audio/asplode.ogg"]  # cache sound
     Sound["media/audio/exploded.ogg"]
 
+    @player.cool_down
     2.times { new_meteor }
+
   end
 
   def new_meteor
@@ -259,10 +263,14 @@ class Level_3 < Chingu::GameState
     @player.input = {:holding_left => :turn_left, :holding_right => :turn_right, :holding_up => :accelerate, :holding_down => :brake, :space => :fire}
     @gui = GUI.create(@player)
 
+    @song_fade = false
+    @fade_count = 0
     Sound["media/audio/asplode.ogg"]  # cache sound
     Sound["media/audio/exploded.ogg"]
 
+    @player.cool_down
     3.times { new_meteor }
+
   end
 
   def new_meteor
@@ -339,7 +347,14 @@ class Level_3 < Chingu::GameState
       after(1000) { push_game_state(Chingu::GameStates::FadeTo.new(GameOver.new, :speed => 10)) }
     end
     if Meteor1.size + Meteor2.size + Meteor3.size == 0
-      after(1000) { push_game_state(Chingu::GameStates::FadeTo.new(Win.new, :speed => 10)) }
+      after(5000) { push_game_state(Win) }
+    end
+    if @song_fade == true
+      @fade_count += 1
+      if @fade_count == 20
+        @fade_count = 0
+        $music.volume -= 0.1
+      end
     end
   end
 end

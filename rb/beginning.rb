@@ -6,7 +6,7 @@ class Beginning < Chingu::GameState
   trait :timer
   def setup
     self.input = { :esc => :exit } #, [:enter, :return] => OpeningCredits, :p => Pause, :r => lambda{current_game_state.setup} }
-    $music = Song["media/audio/music/title_song.ogg"]
+    $music = Song["media/audio/music/intro_song.ogg"]
     $music.volume = 0.8
     $music.play(true)
     after(10) { push_game_state(Chingu::GameStates::FadeTo.new(OpeningCredits.new, :speed => 5)) }
@@ -86,7 +86,7 @@ class OpeningCredits2 < Chingu::GameState
         }
       }
     }
-    after (5000) { push_game_state(Chingu::GameStates::FadeTo.new(Introduction.new, :speed => 10)) }
+    after (4700) { push_game_state(Chingu::GameStates::FadeTo.new(Introduction.new, :speed => 10)) }
   end
 
   def intro
@@ -114,6 +114,7 @@ class Introduction < Chingu::GameState
   def setup
     Chingu::Text.destroy_all
     Player.destroy_all
+    EndPlayer.destroy_all
     Meteor.destroy_all
     $window.caption = "chinguroids"
     @counter = 0
@@ -139,7 +140,7 @@ class Introduction < Chingu::GameState
         @text2 = Chingu::Text.create("Press ENTER to play", :y => 510, :font => "GeosansLight", :size => 45, :color => Colors::Dark_Orange, :zorder => Zorder::GUI)
         @text2.x =800/2 - @text2.width/2
         after(600) {
-          @player = Player.create(:x => 400, :y => 450, :zorder => Zorder::Main_Character)
+          @player = EndPlayer.create(:x => 400, :y => 450, :zorder => Zorder::Main_Character)
         }
       }
     }
