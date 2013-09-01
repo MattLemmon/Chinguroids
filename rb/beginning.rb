@@ -126,7 +126,7 @@ class Introduction < Chingu::GameState
     @click = Sound["media/audio/pickup_chime.ogg"]
 
     if $intro == false
-      $music = Song["media/audio/music/title_song.ogg"]
+      $music = Song["media/audio/music/intro_song.ogg"]
       $music.volume = 0.8
       $music.play(true)
     else
