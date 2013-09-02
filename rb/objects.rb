@@ -20,6 +20,7 @@ class Player < Chingu::GameObject
   	@scr_edge = $scr_edge
     @cooling_down = 0
     @blink = 14
+    @pi = Math::PI
 #    @x_weapons = 0
 #    @y_weapons = 0
 	end
@@ -68,24 +69,17 @@ class Player < Chingu::GameObject
 		self.angle += @rotate_speed
 	end
 
-	def fire
+  def fire
 		@shoot.play(rand(0.05..0.1))
-		Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
-    if $weapon >= 2
-#     Bullet.create(:x => @x + Gosu::offset_x(@angle, 100), :y => @y + Gosu::offset_y(@angle, -10), :angle => @angle, :zorder => Zorder::Projectile)
-     if @angle <= 90
-        Bullet.create(:x => @x + 20 - @angle / 4.5, :y => @y + @angle / 4.5, :angle => @angle, :zorder => Zorder::Projectile)
-        Bullet.create(:x => @x - 20 + @angle / 4.5, :y => @y - @angle / 4.5, :angle => @angle, :zorder => Zorder::Projectile)
-      elsif @angle <= 180
-        Bullet.create(:x => @x + 20 - @angle / 9, :y => @y + @angle / 9, :angle => @angle, :zorder => Zorder::Projectile)
-        Bullet.create(:x => @x - 20 + @angle / 9, :y => @y - @angle / 9, :angle => @angle, :zorder => Zorder::Projectile)
-      elsif @angle <= 270
-        Bullet.create(:x => @x + 20 - @angle / 13.5, :y => @y + @angle / 13.5, :angle => @angle, :zorder => Zorder::Projectile)
-        Bullet.create(:x => @x - 20 + @angle / 13.5, :y => @y - @angle / 13.5, :angle => @angle, :zorder => Zorder::Projectile)
-      else
-        Bullet.create(:x => @x + 20 - @angle / 18, :y => @y + @angle / 18, :angle => @angle, :zorder => Zorder::Projectile)
-        Bullet.create(:x => @x - 40 + @angle / 18, :y => @y - @angle / 18, :angle => @angle, :zorder => Zorder::Projectile)
-      end
+    if $weapon == 1
+  		Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
+    elsif $weapon == 2
+      Bullet.create(:x => @x - 12 * Math.cos(@angle*@pi/180) , :y => @y - 12 * Math.sin(@angle*@pi/180), :angle => @angle, :zorder => Zorder::Projectile)
+      Bullet.create(:x => @x + 12 * Math.cos(@angle*@pi/180) , :y => @y + 12 * Math.sin(@angle*@pi/180), :angle => @angle, :zorder => Zorder::Projectile)
+    elsif $weapon >= 3
+      Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
+      Bullet.create(:x => @x - 20 * Math.cos(@angle*@pi/180) , :y => @y - 20 * Math.sin(@angle*@pi/180), :angle => @angle, :zorder => Zorder::Projectile)
+      Bullet.create(:x => @x + 20 * Math.cos(@angle*@pi/180) , :y => @y + 20 * Math.sin(@angle*@pi/180), :angle => @angle, :zorder => Zorder::Projectile)
     end
   end
 
@@ -144,26 +138,26 @@ end
 #
 class Bullet < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
-	has_traits :timer, :velocity, :collision_detection
+  has_traits :timer, :velocity, :collision_detection
 
-	def initialize(options)
-		super(options.merge(:image => Gosu::Image["assets/laser.png"]))
-		@speed = 7
+  def initialize(options)
+    super(options.merge(:image => Gosu::Image["assets/laser.png"]))
+    @speed = 7
 
-		self.velocity_x = Gosu::offset_x(@angle, @speed)
-		self.velocity_y = Gosu::offset_y(@angle, @speed)
+    self.velocity_x = Gosu::offset_x(@angle, @speed)
+    self.velocity_y = Gosu::offset_y(@angle, @speed)
     @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
-	end
+  end
 
-	def update
-		@y += self.velocity_y
-		@x += self.velocity_x
+  def update
+    @y += self.velocity_y
+    @x += self.velocity_x
     if @x < -@scr_edge; @x = @max_x; end  # wrap beyond screen edge
     if @y < -@scr_edge; @y = @max_y; end
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
     after(550) {self.destroy}
-	end
+  end
 end
 
 #
@@ -363,38 +357,6 @@ class Highlight2 < Chingu::GameObject
 end
 
 #
-#  KNIGHT
-#
-class Knight < Chingu::GameObject
-  trait :timer
-  def initialize(options)
-    super
-    @image = Image["media/assets/knight.png"]
-    @voice = Sound["media/audio/mumble.ogg"]
-    @velox = 0
-    @veloy = 0
-    @factoring = 1
-  end
-  def movement
-    @velox = -7
-  end
-  def enter_ship
-    @veloy = 2
-    @factoring = 0.98
-  end
-  def speak
-    @voice.play
-  end
-  def update
-    self.factor *= @factoring
-    @x += @velox
-    @y += @veloy
-    if @x <= 400; @velox = 0; end
-    if @y >= 450; @veloy = 0; end
-  end
-end
-
-#
 #  EARTH 1
 #
 class Earth1 < Chingu::GameObject
@@ -443,7 +405,7 @@ class Earth2 < Chingu::GameObject
     @easing = 1.0
   end
   def motion_easing
-    @easing = 0.998
+    @easing = 0.994
   end
   def update
     @x += @motion
@@ -471,8 +433,12 @@ class EndPlayer < Chingu::GameObject
     @particles_slow = 1.0
   end
 
-  def shrink
-    @shrinkage = 0.994
+  def shrink1
+    @shrinkage = 0.998
+  end
+  
+  def shrink2
+    @shrinkage = 0.996
   end
 
   def accelerate
@@ -578,7 +544,18 @@ class EndPlayerSide < Chingu::GameObject
       Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
     end
   end
-
 end
+
+
+
+#
+#  SPIRE
+#
+class Spire < Chingu::GameObject
+  def setup
+    @image = Gosu::Image["assets/spire.png"]
+  end
+end
+
 
 

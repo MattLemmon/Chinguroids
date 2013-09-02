@@ -181,7 +181,7 @@ class Level_2 < Chingu::GameState
       else
         $power_up.play
         $stars = 0
-        $weapon = 2
+        $weapon += 1
       end
     end
     Bullet.each_collision(Meteor1) do |bullet, meteor|    # Collide bullets with meteors

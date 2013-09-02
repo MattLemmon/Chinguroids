@@ -30,7 +30,7 @@ end
 class Win < Chingu::GameState
   trait :timer
   def setup
-    self.input = { :esc => :exit, [:enter, :return] => Introduction, :p => Pause, :r => lambda{current_game_state.setup}, [:q, :l] => :pop }
+    self.input = { :esc => :exit, [:enter, :return] => Ending, :p => Pause, :r => lambda{current_game_state.setup}, [:q, :l] => :pop }
     $window.caption = "You win!"
     Bullet.destroy_all
     Player.destroy_all
@@ -52,7 +52,6 @@ class Win < Chingu::GameState
   end
 
   def fly_away
-
     after(1000) { $music = Song["media/audio/music/end_song.ogg"]; $music.volume = 0.8; $music.play(true) }
     after(1000) { @turn_left = true }
     after(1200) { @accel = true }
@@ -61,6 +60,10 @@ class Win < Chingu::GameState
     after(1400) { @player.fire }
     after(1400) { @accel = false }
     after(1500) { @turn_left = false }
+    after(2000) { @player.accelerate }
+    after(2500) { @player.accelerate }
+    after(2600) { @player.turn_left }
+    after(2800) { @player.accelerate }
     after(3000) { @turn_right = true }
     after(3200) { @firing = true }
     after(3600) { @player.speedify; @accel = true }
@@ -102,7 +105,8 @@ class Ending < Chingu::GameState
     after(5000) { @player.accelerate }
     after(10500) { @earth.motion }
     after(20000) { @earth.motion_easing }
-    after(21000) { @player.shrink; @player.adjust_particles }
+    after(18500) { @player.shrink1}
+    after(19500) { @player.shrink2; @player.adjust_particles }
     after(25700) { @player.decelerate }
     after(33000) { push_game_state(Chingu::GameStates::FadeTo.new(Ending2.new, :speed => 10)) }
   end
@@ -115,14 +119,14 @@ end
 class Ending2 < Chingu::GameState
   trait :timer
   def setup
-    self.input = { :esc => :exit, [:enter, :return] => EndCredits, :p => Pause, :r => lambda{current_game_state.setup} }
+    self.input = { :esc => :exit, [:enter, :return] => Ending3, :p => Pause, :r => lambda{current_game_state.setup} }
 
     @player = EndPlayerSide.create(:x => 880, :y => 150, :angle => -90, :velocity_x => -0.7, :velocity_y => 0, :zorder => Zorder::Main_Character)
     @earth = Earth2.create(:x => 150, :y => 300)
     @y_change = 0.3
 
-    after(19000) { @earth.motion_easing }
-    after(28000) { push_game_state(Chingu::GameStates::FadeTo.new(EndCredits.new, :speed => 10)) }
+    after(22000) { @earth.motion_easing }
+    after(29000) { push_game_state(Ending3) }#(Chingu::GameStates::FadeTo.new(Ending3.new, :speed => 10)) }
   end
 
   def y_damp
@@ -147,11 +151,68 @@ class Ending2 < Chingu::GameState
   end
 end
 
+#
+#  ENDING3 GAMESTATE
+#
+class Ending3 < Chingu::GameState
+  trait :timer
+  def setup
+    self.input = { :esc => :exit, [:enter, :return] => EndCredits, :p => Pause, :r => lambda{current_game_state.setup} }
+
+    @spire1 = Spire.create(:x => 40, :y => 40, :factor => 0.3, :zorder => 100)
+
+    @spire2 = Spire.create(:x => 650, :y => 100, :factor => 0.7, :zorder => 230)
+
+    @spire3 = Spire.create(:x => 140, :y => 350, :factor => 1.2, :zorder => 800)
+
+    @knight = EndKnight.create(:x => 1100, :y => 495, :factor => 1.4, :zorder => 600)
+
+    @crowd = Sound["media/audio/huge_crowd.ogg"]
+    @crowd2 = Sound["media/audio/huge_crowd_roar.ogg"]
+
+    @char1 = Char1.create(:x => 200, :y => 200)
+    250.times { create_characters }
+
+    after(50) { @crowd.play(0.7) }
+
+    after(5000) { @crowd2.play(0.6) }
+    after(9000) { @crowd2.play(0.7) }
+    after(13000) { @crowd2.play(0.8) }
+    after(15500) { @crowd2.play(0.6) }
+
+
+    after(22500) { push_game_state(Chingu::GameStates::FadeTo.new(EndCredits.new, :speed => 10)) }
+  end
+
+  def create_characters
+    Char2.create#(:x => rand(800), :y => rand(400))
+    Char3.create#(:x => rand(800), :y => rand(400))
+    Char4.create#(:x => rand(800), :y => rand(400))
+    Char5.create#(:x => rand(800), :y => rand(400))
+    Char6.create#(:x => rand(800), :y => rand(400))
+    Char7.create#(:x => rand(800), :y => rand(400))
+    Char8.create#(:x => rand(800), :y => rand(400))
+    Char9.create#(:x => rand(800), :y => rand(400))
+    Char10.create#(:x => rand(800), :y => rand(400))
+    Char11.create#(:x => rand(800), :y => rand(400))
+    Char12.create#(:x => rand(800), :y => rand(400))
+    Char13.create#(:x => rand(800), :y => rand(400))
+    Char14.create#(:x => rand(800), :y => rand(400))
+    Char15.create#(:x => rand(800), :y => rand(400))
+  end
+
+  def draw
+    Image["../media/assets/end_background.png"].draw(0, 0, 0)    # Background Image: Raw Gosu Image.draw(x,y,zorder)-call
+    super
+  end
+end
+
 
 #
 #   END CREDITS GAMESTATE
 #
 class EndCredits < Chingu::GameState
+  trait :timer
   def initialize
     super
     self.input = { :esc => :exit, [:enter, :return] => Introduction, :p => Pause, :r => lambda{current_game_state.setup}, [:q, :l] => :pop }
@@ -189,6 +250,10 @@ class EndCredits < Chingu::GameState
     @t12.x = 400 - @t11.width/2
     @t13 = Chingu::Text.create(:text=>"Additional Attribution" , :y=>@st+@sp*11, :size=>40, :font => "GeosansLight")
     @t13.x = 400 - @t11.width/2
+
+    after(40000) { push_game_state (Chingu::GameStates::FadeTo.new(Introduction.new, :speed => 10)) }
+
+
 
   end
 

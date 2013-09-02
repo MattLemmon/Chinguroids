@@ -6,6 +6,7 @@ require_relative 'rb/levels.rb'
 require_relative 'rb/objects.rb'
 require_relative 'rb/gui.rb'
 require_relative 'rb/ending.rb'
+require_relative 'rb/characters.rb'
 
 module Zorder
 	GUI = 400
