@@ -9,8 +9,8 @@ class GameOver < Chingu::GameState
   end
 
   def setup
-    @t1 = Chingu::Text.create(:text=>"You died.", :y=>180, :size=>28)
-    @t1.x = 400 - @t1.width/2
+#    @t1 = Chingu::Text.create(:text=>"You died.", :y=>180, :size=>28)
+#    @t1.x = 400 - @t1.width/2
     @t2 = Chingu::Text.create(:text=>"Game Over", :y=>280, :size=>28)
     @t2.x = 400 - @t2.width/2
     @t3 = Chingu::Text.create(:text=>"Press enter", :y=>380, :size=>28)
@@ -31,7 +31,7 @@ class Win < Chingu::GameState
   trait :timer
   def setup
     self.input = { :esc => :exit, [:enter, :return] => Ending, :p => Pause, :r => lambda{current_game_state.setup}, [:q, :l] => :pop }
-    $window.caption = "You win!"
+    $window.caption = "Success!"
     Bullet.destroy_all
     Player.destroy_all
     Star.destroy_all
@@ -77,7 +77,7 @@ class Win < Chingu::GameState
   end
 
   def draw
-    Image["../media/assets/background.png"].draw(0, 0, 0)    # Background Image: Raw Gosu Image.draw(x,y,zorder)-call
+    Image["../media/assets/background.png"].draw(0, 0, 0)    # Background Image
     super
   end
 
@@ -126,6 +126,7 @@ class Ending2 < Chingu::GameState
     @y_change = 0.3
 
     after(22000) { @earth.motion_easing }
+    after(26000) { Sound["media/audio/huge_crowd2.ogg"].play(0.4)}
     after(29000) { push_game_state(Ending3) }#(Chingu::GameStates::FadeTo.new(Ending3.new, :speed => 10)) }
   end
 
@@ -151,6 +152,7 @@ class Ending2 < Chingu::GameState
   end
 end
 
+
 #
 #  ENDING3 GAMESTATE
 #
@@ -159,53 +161,50 @@ class Ending3 < Chingu::GameState
   def setup
     self.input = { :esc => :exit, [:enter, :return] => EndCredits, :p => Pause, :r => lambda{current_game_state.setup} }
 
-    @spire1 = Spire.create(:x => 40, :y => 40, :factor => 0.3, :zorder => 100)
+    @spire = Spire.create(:x => 140, :y => 350, :factor => 1.2, :zorder => 800)
 
-    @spire2 = Spire.create(:x => 650, :y => 100, :factor => 0.7, :zorder => 230)
+    @knight = EndKnight.create(:x => 1200, :y => 505, :factor => 1.4, :zorder => 600)
 
-    @spire3 = Spire.create(:x => 140, :y => 350, :factor => 1.2, :zorder => 800)
+    @cheering1 = Sound["media/audio/huge_crowd.ogg"]
+    @cheering2 = Sound["media/audio/huge_crowd_roar.ogg"]
 
-    @knight = EndKnight.create(:x => 1100, :y => 495, :factor => 1.4, :zorder => 600)
+    @multitude = Crowd.create(:x=>400,:y=>150)
 
-    @crowd = Sound["media/audio/huge_crowd.ogg"]
-    @crowd2 = Sound["media/audio/huge_crowd_roar.ogg"]
+    200.times { create_characters }
 
-    @char1 = Char1.create(:x => 200, :y => 200)
-    250.times { create_characters }
-
-    after(50) { @crowd.play(0.7) }
-
-    after(5000) { @crowd2.play(0.6) }
-    after(9000) { @crowd2.play(0.7) }
-    after(13000) { @crowd2.play(0.8) }
-    after(15500) { @crowd2.play(0.6) }
-
+    after(10) { @cheering1.play(0.5) }
+    after(5000) { @cheering2.play(0.4) }
+    after(9000) { @cheering2.play(0.5) }
+    after(13000) { @cheering2.play(0.6) }
+    after(15500) { @cheering2.play(0.3) }
 
     after(22500) { push_game_state(Chingu::GameStates::FadeTo.new(EndCredits.new, :speed => 10)) }
   end
 
   def create_characters
-    Char2.create#(:x => rand(800), :y => rand(400))
-    Char3.create#(:x => rand(800), :y => rand(400))
-    Char4.create#(:x => rand(800), :y => rand(400))
-    Char5.create#(:x => rand(800), :y => rand(400))
-    Char6.create#(:x => rand(800), :y => rand(400))
-    Char7.create#(:x => rand(800), :y => rand(400))
-    Char8.create#(:x => rand(800), :y => rand(400))
-    Char9.create#(:x => rand(800), :y => rand(400))
-    Char10.create#(:x => rand(800), :y => rand(400))
-    Char11.create#(:x => rand(800), :y => rand(400))
-    Char12.create#(:x => rand(800), :y => rand(400))
-    Char13.create#(:x => rand(800), :y => rand(400))
-    Char14.create#(:x => rand(800), :y => rand(400))
-    Char15.create#(:x => rand(800), :y => rand(400))
+    Char1.create
+    Char2.create
+    Char3.create
+    Char4.create
+    Char5.create
+    Char6.create
+    Char7.create
+    Char8.create
+    Char9.create
+    Char10.create
+    Char11.create
+    Char12.create
+    Char13.create
+    Char14.create
+    Char15.create
   end
 
   def draw
-    Image["../media/assets/end_background.png"].draw(0, 0, 0)    # Background Image: Raw Gosu Image.draw(x,y,zorder)-call
+    Image["../media/assets/end_background.png"].draw(0, 0, 0)    # Background Image
     super
   end
 end
+
 
 
 #
@@ -220,7 +219,7 @@ class EndCredits < Chingu::GameState
 
   def setup
     $window.caption = "Credits"
-    @scroll_speed = 0.7
+    @scroll_speed = 0.6
     @st = 650
     @sp = 50
 
@@ -238,23 +237,26 @@ class EndCredits < Chingu::GameState
     @t6.x = 400 - @t6.width/2
     @t7 = Chingu::Text.create(:text=>"Game Music borrowed from Stageoids by ExplodingCookie " , :y=>@st+@sp*7, :size=>40, :font => "GeosansLight")
     @t7.x = 400 - @t7.width/2
-    @t8 = Chingu::Text.create(:text=>"End Music by ______" , :y=>@st+@sp*8, :size=>40, :font => "GeosansLight")
+    @t8 = Chingu::Text.create(:text=>"End Music by (source unknown)" , :y=>@st+@sp*8, :size=>40, :font => "GeosansLight")
     @t8.x = 400 - @t8.width/2
     @t9 = Chingu::Text.create(:text=>"Knight and Voice borrowed from StarryKnight/Metro by burtlo" , :y=>@st+@sp*9, :size=>40, :font => "GeosansLight")
     @t9.x = 400 - @t9.width/2
     @t10 = Chingu::Text.create(:text=>"Some Sounds remixed from soundbible.com" , :y=>@st+@sp*10, :size=>40, :font => "GeosansLight")
     @t10.x = 400 - @t10.width/2
-    @t11 = Chingu::Text.create(:text=>"Additional thanks to Spooner, lol _ o2, et al" , :y=>@st+@sp*11, :size=>40, :font => "GeosansLight")
+    @t11 = Chingu::Text.create(:text=>"Future Earth by" , :y=>@st+@sp*11, :size=>40, :font => "GeosansLight")
     @t11.x = 400 - @t11.width/2
-    @t12 = Chingu::Text.create(:text=>"Additional Attribution" , :y=>@st+@sp*11, :size=>40, :font => "GeosansLight")
-    @t12.x = 400 - @t11.width/2
-    @t13 = Chingu::Text.create(:text=>"Additional Attribution" , :y=>@st+@sp*11, :size=>40, :font => "GeosansLight")
-    @t13.x = 400 - @t11.width/2
+    @img11 = Signature1.create
+    @img11.x = 400 + @t11.width/2 + 5 + @img11.width/2
+    @img11.y = @st+@sp*11+20
+    @t12 = Chingu::Text.create(:text=>"Future Earth 2 by" , :y=>@st+@sp*12, :size=>40, :font => "GeosansLight")
+    @t12.x = 400 - @t12.width/2
+    @img12 = Signature2.create
+    @img12.x = 400 + @t12.width/2 + 10 + @img12.width/2
+    @img12.y = @st+@sp*12+20
+    @t13 = Chingu::Text.create(:text=>"Additional thanks to Spooner, lol _ o2, et al" , :y=>@st+@sp*13, :size=>40, :font => "GeosansLight")
+    @t13.x = 400 - @t13.width/2
 
-    after(40000) { push_game_state (Chingu::GameStates::FadeTo.new(Introduction.new, :speed => 10)) }
-
-
-
+    after(44000) { push_game_state (Chingu::GameStates::FadeTo.new(Introduction.new, :speed => 10)) }
   end
 
   def pop
@@ -273,5 +275,9 @@ class EndCredits < Chingu::GameState
     @t9.y -= @scroll_speed
     @t10.y -= @scroll_speed
     @t11.y -= @scroll_speed
+    @t12.y -= @scroll_speed
+    @t13.y -= @scroll_speed
+    @img11.y -= @scroll_speed
+    @img12.y -= @scroll_speed
   end
 end

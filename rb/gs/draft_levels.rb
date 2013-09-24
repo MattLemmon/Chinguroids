@@ -44,11 +44,6 @@ end
 
 
 
-
-
-
-
-
 #
 #  LEVEL_1 GAMESTATE
 #
@@ -557,5 +552,111 @@ class Earth1 < Chingu::GameObject
     if self.factor >= 0.31
       @factoring = 1.0
     end
+  end
+end
+
+
+
+
+#
+#  ENDING4 GAMESTATE
+#
+class Ending4 < Chingu::GameState
+  trait :timer
+  def setup
+    self.input = { :esc => :exit, [:enter, :return] => EndCredits, :p => Pause, :r => lambda{current_game_state.setup} }
+
+    @spire1 = Spire.create(:x => 40, :y => 125, :factor => 0.15, :zorder => 165)
+
+    @spire2 = Spire.create(:x => 90, :y => 110, :factor => 0.38, :zorder => 200)
+
+    @spire3 = Spire.create(:x => 210, :y => 122, :factor => 0.13, :zorder => 158)
+
+    @spire4 = Spire.create(:x => 290, :y => 120, :factor => 0.23, :zorder => 180)
+
+    @spire5 = Spire.create(:x => 560, :y => 125, :factor => 0.15, :zorder => 165)
+
+    @spire6 = Spire.create(:x => 670, :y => 120, :factor => 0.2, :zorder => 172)
+
+    @spire7 = Spire.create(:x => 740, :y => 90, :factor => 0.45, :zorder => 200)
+
+
+
+#    @spire6 = Spire.create(:x => 140, :y => 350, :factor => 1.2, :zorder => 800)
+
+#    @knight = EndKnight.create(:x => 1100, :y => 495, :factor => 1.4, :zorder => 600)
+
+    @crowd = Sound["media/audio/huge_crowd.ogg"]
+    @crowd2 = Sound["media/audio/huge_crowd_roar.ogg"]
+
+   # @char1 = Char1.create(:x => 200, :y => 200)
+    350.times { create_characters }
+
+    after(10) { @crowd.play(0.7) }
+
+    after(5000) { @crowd2.play(0.6) }
+    after(9000) { @crowd2.play(0.7) }
+    after(13000) { @crowd2.play(0.8) }
+    after(15500) { @crowd2.play(0.6) }
+
+#    after(22500) { push_game_state(Chingu::GameStates::FadeTo.new(EndCredits.new, :speed => 10)) }
+  end
+
+  def create_characters
+    Char1.create
+    Char2.create
+    Char3.create
+    Char4.create
+    Char5.create
+    Char6.create
+    Char7.create
+    Char8.create
+    Char9.create
+    Char10.create
+    Char11.create
+    Char12.create
+    Char13.create
+    Char14.create
+    Char15.create
+  end
+
+  def draw
+    Image["../media/assets/end_background.png"].draw(0, 0, 0)    # Background Image: Raw Gosu Image.draw(x,y,zorder)-call
+    super
+  end
+end
+
+#
+#  CHARACTERS
+#
+class Characters < Chingu::GameObject
+  def initialize(options={})
+    super
+    self.x = rand(812) - 6
+
+    if rand(6) == 1
+      self.y = rand(100) + 156
+    elsif rand(5) == 1
+      self.y = rand(100) + 156
+    elsif rand(4) == 1
+      self.y = rand(90) + 156
+    elsif rand(3) == 1
+      self.y = rand(80) + 156
+    elsif rand(2) == 1
+      self.y = rand(60) + 156
+    elsif rand(2) == 1
+      self.y = rand(40) + 156
+    else
+      self.y = rand(20) + 156
+    end
+  end
+
+  def update 
+    self.factor = (@y + 200)/3200.0
+    self.zorder = @y
+    if rand(50) == 1; @x += @motion; end
+    if rand(50) == 1; @x -= @motion; end
+    if rand(150) == 1; @y += @motion; end
+    if rand(150) == 1; @y -= @motion; end
   end
 end

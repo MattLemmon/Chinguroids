@@ -73,6 +73,7 @@ class Level_1 < Chingu::GameState
       bullet.destroy
       $score += 100
       Sound["media/audio/explosion.ogg"].play(0.2)
+      break
     end
     Bullet.each_collision(Meteor2) do |bullet, meteor|    # Collide bullets with meteors
       Explosion.create(:x => meteor.x, :y => meteor.y)
@@ -82,6 +83,7 @@ class Level_1 < Chingu::GameState
       bullet.destroy
       $score += 100
       Sound["media/audio/asplode.ogg"].play(0.2)
+      break
     end
     Bullet.each_collision(Meteor3) do |bullet, meteor|    # Collide bullets with meteors
       Explosion.create(:x => meteor.x, :y => meteor.y)
@@ -89,6 +91,7 @@ class Level_1 < Chingu::GameState
       bullet.destroy
       $score += 100
       Sound["media/audio/asplode.ogg"].play(0.2)
+      break
     end
     Player.each_collision(Meteor1) do |starship, meteor|    # Collide starships with meteors
       @player.damage
@@ -192,6 +195,7 @@ class Level_2 < Chingu::GameState
       bullet.destroy
       $score += 100
       Sound["media/audio/explosion.ogg"].play(0.2)
+      break
     end
     Bullet.each_collision(Meteor2) do |bullet, meteor|    # Collide bullets with meteors
       Explosion.create(:x => meteor.x, :y => meteor.y)
@@ -201,6 +205,7 @@ class Level_2 < Chingu::GameState
       bullet.destroy
       $score += 100
       Sound["media/audio/asplode.ogg"].play(0.2)
+      break
     end
     Bullet.each_collision(Meteor3) do |bullet, meteor|    # Collide bullets with meteors
       Explosion.create(:x => meteor.x, :y => meteor.y)
@@ -208,6 +213,7 @@ class Level_2 < Chingu::GameState
       bullet.destroy
       $score += 100
       Sound["media/audio/asplode.ogg"].play(0.2)
+      break
     end
     Player.each_collision(Meteor1) do |starship, meteor|    # Collide starships with meteors
       @player.damage
@@ -302,6 +308,7 @@ class Level_3 < Chingu::GameState
       bullet.destroy
       $score += 100
       Sound["media/audio/explosion.ogg"].play(0.2)
+      break
     end
     Bullet.each_collision(Meteor2) do |bullet, meteor|    # Collide bullets with meteors
       Explosion.create(:x => meteor.x, :y => meteor.y)
@@ -311,6 +318,7 @@ class Level_3 < Chingu::GameState
       bullet.destroy
       $score += 100
       Sound["media/audio/asplode.ogg"].play(0.2)
+      break
     end
     Bullet.each_collision(Meteor3) do |bullet, meteor|    # Collide bullets with meteors
       Explosion.create(:x => meteor.x, :y => meteor.y)
@@ -318,6 +326,7 @@ class Level_3 < Chingu::GameState
       bullet.destroy
       $score += 100
       Sound["media/audio/asplode.ogg"].play(0.2)
+      break
     end
     Player.each_collision(Meteor1) do |starship, meteor|    # Collide starships with meteors
       @player.damage

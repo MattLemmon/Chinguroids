@@ -19,7 +19,7 @@ end
 class Pause < Chingu::GameState
   def initialize(options = {})
     super
-    @title = Chingu::Text.create(:text=>"PAUSED (press 'P' to un-pause, 'R' to reset)", :x=>100, :y=>100, :size=>30, :color => Color.new(0xFF00FF00), :zorder=>1000 )
+#    @title = Chingu::Text.create(:text=>"PAUSED (press 'P' to un-pause, 'R' to reset)", :x=>100, :y=>100, :size=>30, :color => Color.new(0xFF00FF00), :zorder=>1000 )
     self.input = { :p => :un_pause, :r => :reset }
   end
   def un_pause
@@ -50,7 +50,7 @@ class OpeningCredits < Chingu::GameState
   end
 
   def intro
-    push_game_state(Chingu::GameStates::FadeTo.new(Introduction.new, :speed => 10))
+    push_game_state(Chingu::GameStates::FadeTo.new(OpeningCredits2.new, :speed => 10))
   end
 
   def draw
@@ -74,11 +74,11 @@ class OpeningCredits2 < Chingu::GameState
         @sparkle.turnify2
         after(1500) {
           @sparkle.turnify3
-          after(100) {
+          after(500) {
             @sparkle.turnify4
-            after(100) {
+            after(500) {
               @sparkle.turnify5
-              after(100) {
+              after(500) {
                 @sparkle.turnify6
               }
             }

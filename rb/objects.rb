@@ -20,7 +20,7 @@ class Player < Chingu::GameObject
   	@scr_edge = $scr_edge
     @cooling_down = 0
     @blink = 14
-    @pi = Math::PI
+#    @pi = Math::PI
 #    @x_weapons = 0
 #    @y_weapons = 0
 	end
@@ -73,13 +73,16 @@ class Player < Chingu::GameObject
 		@shoot.play(rand(0.05..0.1))
     if $weapon == 1
   		Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
+
     elsif $weapon == 2
-      Bullet.create(:x => @x - 12 * Math.cos(@angle*@pi/180) , :y => @y - 12 * Math.sin(@angle*@pi/180), :angle => @angle, :zorder => Zorder::Projectile)
-      Bullet.create(:x => @x + 12 * Math.cos(@angle*@pi/180) , :y => @y + 12 * Math.sin(@angle*@pi/180), :angle => @angle, :zorder => Zorder::Projectile)
+      Bullet.create(:x => @x + Gosu::offset_x(@angle+90, 8), :y => @y + Gosu::offset_y(@angle+90, 8), :angle => @angle)
+      Bullet.create(:x => @x + Gosu::offset_x(@angle+90, -8), :y => @y + Gosu::offset_y(@angle+90, -8), :angle => @angle)
+
     elsif $weapon >= 3
       Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
-      Bullet.create(:x => @x - 20 * Math.cos(@angle*@pi/180) , :y => @y - 20 * Math.sin(@angle*@pi/180), :angle => @angle, :zorder => Zorder::Projectile)
-      Bullet.create(:x => @x + 20 * Math.cos(@angle*@pi/180) , :y => @y + 20 * Math.sin(@angle*@pi/180), :angle => @angle, :zorder => Zorder::Projectile)
+      Bullet.create(:x => @x + Gosu::offset_x(@angle+90, 14), :y => @y + Gosu::offset_y(@angle+90, 14), :angle => @angle)
+      Bullet.create(:x => @x + Gosu::offset_x(@angle+90, -14), :y => @y + Gosu::offset_y(@angle+90, -14), :angle => @angle)
+#      Bullet.create(:x => @x + 20 * Math.cos(@angle*Math::PI/180) , :y => @y + 20 * Math.sin(@angle*Math::PI/180), :angle => @angle)
     end
   end
 
@@ -317,12 +320,12 @@ class Sparkle < Chingu::GameObject
     @factoring = 1.0
     @angle = 35
   end
-  def turnify1; @turning = 0.5; @factoring = 1.2;   end
-  def turnify2; @turning = 0.5; @factoring = 1.02;  end
-  def turnify3; @turning = 0.49; @factoring = 1.0;  end
-  def turnify4; @turning = 0.47; @factoring = 1.0;  end
-  def turnify5; @turning = 0.45; @factoring = 1.0;  end
-  def turnify6; @turning = 0.43; @factoring = 1.0;  end
+  def turnify1; @turning = 0.6; @factoring = 1.2;   end
+  def turnify2; @turning = 0.55; @factoring = 1.009;  end
+  def turnify3; @turning = 0.5; @factoring = 1.006;  end
+  def turnify4; @turning = 0.49; @factoring = 1.003;  end
+  def turnify5; @turning = 0.46; @factoring = 1.0005;  end
+  def turnify6; @turning = 0.44; @factoring = 1.0;  end
   def update
     @angle += @turning
     self.factor *= @factoring
@@ -546,8 +549,6 @@ class EndPlayerSide < Chingu::GameObject
   end
 end
 
-
-
 #
 #  SPIRE
 #
@@ -557,5 +558,23 @@ class Spire < Chingu::GameObject
   end
 end
 
+#
+#  SIGNATURE 1
+#
+class Signature1 < Chingu::GameObject
+  def setup
+    @image = Image["media/assets/fut_earth_sig.png"]
+    self.factor = 0.9
+  end
+end
 
+#
+#  SIGNATURE 2
+#
+class Signature2 < Chingu::GameObject
+  def setup
+    @image = Image["media/assets/fut_earth2_sig.png"]
+    self.factor = 1.4
+  end
+end
 
