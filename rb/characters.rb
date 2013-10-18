@@ -1,24 +1,23 @@
 #
 #  KNIGHT
-#
+#    called in beginning.rb, in Introduction gamestate
 class Knight < Chingu::GameObject
-#  trait :timer
   def initialize(options)
     super
     @image = Image["media/assets/knight.png"]
     @voice = Sound["media/audio/mumble.ogg"]
-    @velox = 0
-    @veloy = 0
-    @factoring = 1
+    @velox = 0     # x velocity starts as 0
+    @veloy = 0     # y velocity starts as 0
+    @factoring = 1 # used for shrinking Knight when he enters the ship
   end
-  def movement
-    @velox = -7
+  def movement   # called in Introduction gamestate
+    @velox = -7  # move left
   end
-  def enter_ship
+  def enter_ship # called in Introduction gamestate
     @veloy = 2
     @factoring = 0.98
   end
-  def speak
+  def speak      # called in Introduction gamestate
     @voice.play
   end
   def update
@@ -32,24 +31,24 @@ end
 
 #
 #  END KNIGHT
-#
+#    called in ending.rb, in Ending3 gamestate
 class EndKnight < Chingu::GameObject
   def setup
     @image = Image["media/assets/knight_left.png"]
   end
   def update
-    @x -= 2.2
+    @x -= 2.2  # EndKnight starts offscreen and continually moves to the left
   end
 end
 
 
 #
 #  CHARACTERS
-#
+#    called in ending.rb, in Ending3 gamestate
 class Characters < Chingu::GameObject
   def initialize(options={})
     super
-    self.x = rand(812) - 6
+    self.x = rand(812) - 6       # place characters randomly all over
 
     if rand(5) == 1
       self.y = rand(100) + 310
@@ -65,24 +64,23 @@ class Characters < Chingu::GameObject
   end
 
   def update 
-    self.factor = (@y-150)/400.0
-    self.zorder = @y
-    if rand(50) == 1; @x += @motion; end
+    self.factor = (@y-150)/400.0  # character size is affected by y position
+    self.zorder = @y              # character zorder is affected by y position
+    if rand(50) == 1; @x += @motion; end   # random crowd movements
     if rand(50) == 1; @x -= @motion; end
     if rand(150) == 1; @y += @motion; end
     if rand(150) == 1; @y -= @motion; end
   end
 end
 
-
-class Char2 < Characters
+class Char2 < Characters  # inherits from Characters class
   def setup
     @motion = 1
     @image = Gosu::Image["assets/characters/char2.png"]
   end
 end
 
-class Char3 < Characters
+class Char3 < Characters  # inherits from Characters class
   def setup
     @motion = 1
     @image = Gosu::Image["assets/characters/char3.png"]
@@ -176,9 +174,8 @@ end
 
 #
 #  CHARACTER 1 
-#
-#class Char1 < Characters
-class Char1 < Characters #Chingu::GameObject
+#    Char1 can be controlled with the arrow keys in Ending3 gamestate
+class Char1 < Characters
   def setup
 #    self.factor = 1.1
     @motion = 1

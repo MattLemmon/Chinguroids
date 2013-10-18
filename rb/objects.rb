@@ -2,7 +2,7 @@ DEBUG = false  # Set to true to see bounding circles used for collision detectio
 
 #
 #  PLAYER CLASS
-#
+#    called in levels.rb and in ending.rb (Win gamestate)
 class Player < Chingu::GameObject
 	attr_reader :health, :score
   trait :bounding_circle, :debug => DEBUG
@@ -20,24 +20,21 @@ class Player < Chingu::GameObject
   	@scr_edge = $scr_edge
     @cooling_down = 0
     @blink = 14
-#    @pi = Math::PI
-#    @x_weapons = 0
-#    @y_weapons = 0
 	end
 
-  def cool_down
+  def cool_down   # player cannot be damaged when blinking
     @cooling_down = $cooling_down
   end
 
   def damage
-    if @cooling_down == 0
+    if @cooling_down == 0  # only causes damage is player is not blinking
       @cooling_down = $cooling_down
       $health -= 1
-      Sound["media/audio/exploded.ogg"].play(0.2)
+      Sound["media/audio/exploded.ogg"].play(0.3)
     end
   end
 
-  def blink
+  def blink    # blink on and off every 7 ticks
     if @blink == 14
       @image = @picture2
       @blink = 0
@@ -49,14 +46,14 @@ class Player < Chingu::GameObject
     end
   end
 
-	def accelerate
+	def accelerate  # pressing up arrow causes player to accelerate
     if self.velocity_x <= @max_speed && self.velocity_y <= @max_speed
   		self.velocity_x += Gosu::offset_x(self.angle, @speed)
 	  	self.velocity_y += Gosu::offset_y(self.angle, @speed)
     end
 	end
 
-	def brake
+	def brake       # pressing down arrow invokes brakes
 		self.velocity_x *= 0.88
 		self.velocity_y *= 0.88
 	end
@@ -70,33 +67,34 @@ class Player < Chingu::GameObject
 	end
 
   def fire
-		@shoot.play(rand(0.05..0.1))
-    if $weapon == 1
+		@shoot.play(rand(0.05..0.1))  # randomize laser sound effect volume
+    if $weapon == 1   # number of Bullets fired depends on weapons upgrade status
   		Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
 
-    elsif $weapon == 2
+    elsif $weapon == 2   # use Gosu::offset for upgraded weapons (thanks to PeterT)
       Bullet.create(:x => @x + Gosu::offset_x(@angle+90, 8), :y => @y + Gosu::offset_y(@angle+90, 8), :angle => @angle)
       Bullet.create(:x => @x + Gosu::offset_x(@angle+90, -8), :y => @y + Gosu::offset_y(@angle+90, -8), :angle => @angle)
 
-    elsif $weapon >= 3
+    elsif $weapon >= 3   # fires three Bullets when weapons are fully upgraded
       Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
       Bullet.create(:x => @x + Gosu::offset_x(@angle+90, 14), :y => @y + Gosu::offset_y(@angle+90, 14), :angle => @angle)
       Bullet.create(:x => @x + Gosu::offset_x(@angle+90, -14), :y => @y + Gosu::offset_y(@angle+90, -14), :angle => @angle)
 #      Bullet.create(:x => @x + 20 * Math.cos(@angle*Math::PI/180) , :y => @y + 20 * Math.sin(@angle*Math::PI/180), :angle => @angle)
+#      alternate way to do the weapons offsets with sin and cos
     end
   end
 
-  def speedify
+  def speedify  # method called in Win gamestate, in ending.rb
     @max_speed = 50
   end
 
   def update
-    self.velocity_x *= 0.99
+    self.velocity_x *= 0.99   # dampen velocity
     self.velocity_y *= 0.99
 
     if @cooling_down != 0  # player cannot be damaged during cool down
-      @cooling_down -= 1
-      blink
+      @cooling_down -= 1   # cool down counter
+      blink  # calls blink method -- player blinks when @cooling_down is not 0
     else
       @image = @picture1
     end
@@ -106,7 +104,7 @@ class Player < Chingu::GameObject
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
 
-  # Particle -- Remember to fix the color error
+    # Particles from rocket booster
 		Chingu::Particle.create(:x => @x, :y => @y,
 	  				:image => "assets/particle_1.png", 
 						:color => 0xFF86EFFF, 
@@ -114,7 +112,6 @@ class Player < Chingu::GameObject
 						:fade_rate => -45,
 						:angle => @angle,
 						:zorder => Zorder::Main_Character_Particles)
-
 		Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @part_speed); particle.x -= Gosu::offset_x(@angle, @part_speed)}
 		Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
   end
@@ -123,7 +120,7 @@ end
 
 #
 #   EXPLOSION
-#
+#     called in levels.rb when meteors are destroyed and when player dies
 class Explosion < Chingu::GameObject
   trait :timer
   def setup
@@ -138,7 +135,7 @@ end
 
 #
 #   BULLET
-#
+#     technically speaking, it's a laser, but it's still called "Bullet"
 class Bullet < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
   has_traits :timer, :velocity, :collision_detection
@@ -146,7 +143,6 @@ class Bullet < Chingu::GameObject
   def initialize(options)
     super(options.merge(:image => Gosu::Image["assets/laser.png"]))
     @speed = 7
-
     self.velocity_x = Gosu::offset_x(@angle, @speed)
     self.velocity_y = Gosu::offset_y(@angle, @speed)
     @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
@@ -159,13 +155,13 @@ class Bullet < Chingu::GameObject
     if @y < -@scr_edge; @y = @max_y; end
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
-    after(550) {self.destroy}
+    after(550) {self.destroy}  # goes through screen edges, but only to a certain distance
   end
 end
 
 #
 #   STAR CLASS
-#
+#     stars can be picked up by player; called in levels.rb
 class Star < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
   trait :collision_detection
@@ -194,7 +190,7 @@ end
 
 #
 #   METEOR
-#
+#     Meteor class is used in Introduction gamestate
 class Meteor < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
   traits :velocity, :collision_detection
@@ -215,38 +211,38 @@ end
 
 #
 #   METEOR 1 - BIG
-#
+#     Meteor1 class is used in levels.rb
 class Meteor1 < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
   traits :velocity, :collision_detection
 
   def setup
     @image = Image["media/assets/meteor.png"]
-    self.factor = 1.52
+    self.factor = 1.52  # meteor size
     self.zorder = 500
-    self.velocity_x = (3 - rand * 6) * 2
+    self.velocity_x = (3 - rand * 6) * 2  # randomize location
     self.velocity_y = (3 - rand * 6) * 2
-    @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
-    @angle = rand(360)
+    @angle = rand(360)                    # randomize rotation
     @rotate = rand(10) + 5
     if @rotate == 0; @rotate = 6; end
     if rand(2) == 1; @rotate *= -1; end
-    cache_bounding_circle
+    @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
+    cache_bounding_circle   # cache meteor size for collision detection
   end
 
-  def meteor_placement
-    if rand(2) == 1
-      self.x = 0
-      self.y = rand(600)
-    else
-      self.x = rand(800)
-      self.y = 0
-    end
-  end
+#  def meteor_placement
+#    if rand(2) == 1
+#      self.x = 0
+#      self.y = rand(600)
+#    else
+#      self.x = rand(800)
+#      self.y = 0
+#    end
+#  end
 
   def update
     @angle += @rotate
-    if @x < -@scr_edge; @x = @max_x; end
+    if @x < -@scr_edge; @x = @max_x; end  # wrap around screen beyond edges
     if @y < -@scr_edge; @y = @max_y; end
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
@@ -255,7 +251,7 @@ end
 
 #
 #   METEOR 2 - MEDIUM
-#
+#     Meteor2 class is used in levels.rb
 class Meteor2 < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
   traits :velocity, :collision_detection
@@ -263,18 +259,20 @@ class Meteor2 < Chingu::GameObject
   def setup
     @image = Image["media/assets/meteor.png"]
     self.zorder = 500
-    self.factor = 1.16
-    self.velocity_x = (3 - rand * 6) * 2
+    self.factor = 1.16  # meteor size
+    self.velocity_x = (3 - rand * 6) * 2  # randomize location
     self.velocity_y = (3 - rand * 6) * 2
-    @angle = rand(360)
+    @angle = rand(360)                    # randomize rotation
     @rotate = 5 - rand(10)
+    if @rotate == 0; @rotate = 6; end
+    if rand(2) == 1; @rotate *= -1; end
     @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
-    cache_bounding_circle
+    cache_bounding_circle    # cache meteor size for collision detection
   end
 
   def update
     @angle += @rotate
-    if @x < -@scr_edge; @x = @max_x; end
+    if @x < -@scr_edge; @x = @max_x; end  # wrap around screen beyond edges
     if @y < -@scr_edge; @y = @max_y; end
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
@@ -283,7 +281,7 @@ end
 
 #
 #   METEOR 3 - SMALL
-#
+#     Meteor3 class is used in levels.rb
 class Meteor3 < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
   traits :velocity, :collision_detection
@@ -291,18 +289,20 @@ class Meteor3 < Chingu::GameObject
   def setup
     @image = Image["media/assets/meteor.png"]
     self.zorder = 500
-    self.factor = 0.78
-    self.velocity_x = (3 - rand * 6) * 2.5
+    self.factor = 0.78  # meteor size
+    self.velocity_x = (3 - rand * 6) * 2.5  # randomize location
     self.velocity_y = (3 - rand * 6) * 2.5
-    @angle = rand(360)
+    @angle = rand(360)                      # randomize rotation
     @rotate = 5 - rand(10)
+    if @rotate == 0; @rotate = 6; end
+    if rand(2) == 1; @rotate *= -1; end
     @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
-    cache_bounding_circle
+    cache_bounding_circle   # cache meteor size for collision detection
   end
 
   def update
     @angle += @rotate
-    if @x < -@scr_edge; @x = @max_x; end
+    if @x < -@scr_edge; @x = @max_x; end  # wrap around screen beyond edges
     if @y < -@scr_edge; @y = @max_y; end
     if @x > @max_x; @x = -@scr_edge; end
     if @y > @max_y; @y = -@scr_edge; end
@@ -311,7 +311,7 @@ end
 
 #
 #  SPARKLE
-#
+#    called in OpeningCredits2 gamestate (Ruby logo)
 class Sparkle < Chingu::GameObject
   def setup
     @image = Image["media/assets/sparkle.png"]
@@ -320,12 +320,14 @@ class Sparkle < Chingu::GameObject
     @factoring = 1.0
     @angle = 35
   end
+
   def turnify1; @turning = 0.6; @factoring = 1.2;   end
-  def turnify2; @turning = 0.55; @factoring = 1.009;  end
-  def turnify3; @turning = 0.5; @factoring = 1.006;  end
-  def turnify4; @turning = 0.49; @factoring = 1.003;  end
-  def turnify5; @turning = 0.46; @factoring = 1.0005;  end
-  def turnify6; @turning = 0.44; @factoring = 1.0;  end
+  def turnify2; @turning = 0.55; @factoring = 1.025;  end
+  def turnify3; @turning = 0.45; @factoring = 1.015;  end
+  def turnify4; @turning = 0.3; @factoring = 1.002;  end
+  def turnify5; @turning = 0.15; @factoring = 1.0005;  end
+  def turnify6; @turning = 0.0; @factoring = 1.0;  end
+
   def update
     @angle += @turning
     self.factor *= @factoring
@@ -337,7 +339,7 @@ end
 
 #
 #  HIGHLIGHT
-#
+#    called in OpeningCredits gamestate (Gosu logo)
 class Highlight < Chingu::GameObject
   def setup
     @image = Image["media/assets/highlight.png"]
@@ -349,7 +351,7 @@ end
 
 #
 #  HIGHLIGHT2
-#
+#    called in OpeningCredits gamestate (Gosu logo)
 class Highlight2 < Chingu::GameObject
   def setup
     @image = Image["media/assets/highlight2.png"]
@@ -361,7 +363,7 @@ end
 
 #
 #  EARTH 1
-#
+#    called in Ending gamestate - trial and error adjustments to slowly zoom into view
 class Earth1 < Chingu::GameObject
   def setup
     @image = Image["media/assets/future_earth.png"]
@@ -370,9 +372,6 @@ class Earth1 < Chingu::GameObject
     @motion = 0.0
     @easing = 1.0
     @fact_ease = 0.999975
-  end
-  def factorize
-    @factoring = 1.0035
   end
   def fact_ease
     @fact_ease = 0.998
@@ -399,7 +398,7 @@ end
 
 #
 #  EARTH 2
-#
+#    used in Ending2 gamestate
 class Earth2 < Chingu::GameObject
   def setup
     @image = Image["media/assets/future_earth2.png"]
@@ -407,7 +406,7 @@ class Earth2 < Chingu::GameObject
     @motion = 0.34
     @easing = 1.0
   end
-  def motion_easing
+  def motion_easing  # method called in Ending2 gamestate
     @easing = 0.994
   end
   def update
@@ -417,10 +416,10 @@ class Earth2 < Chingu::GameObject
 end
 
 
-
 #
 #  END PLAYER
-#
+#    Player clone with no blinking, used in Introduction and Ending gamestates
+#    Adds in some methods to adjust the spaceship size and movement as it descends to Earth
 class EndPlayer < Chingu::GameObject
   trait :bounding_circle, :debug => DEBUG
   traits :velocity, :collision_detection
@@ -459,23 +458,23 @@ class EndPlayer < Chingu::GameObject
     @particles_slow = 0.997
   end
 
-  def fire
-    @shoot.play(rand(0.05..0.1))
-    Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
-  end
+#  def fire
+#    @shoot.play(rand(0.05..0.1))
+#    Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
+#  end
 
-  def brake
-    self.velocity_x *= 0.88
-    self.velocity_y *= 0.88
-  end
+#  def brake
+#    self.velocity_x *= 0.88
+#    self.velocity_y *= 0.88
+#  end
 
-  def turn_left
-    self.angle -= @rotate_speed
-  end
+#  def turn_left
+#    self.angle -= @rotate_speed
+#  end
 
-  def turn_right
-    self.angle += @rotate_speed
-  end
+#  def turn_right
+#    self.angle += @rotate_speed
+#  end
 
   def update
     self.factor *= @shrinkage
@@ -499,7 +498,7 @@ end
 
 #
 #  END PLAYER SIDE
-#
+#    used in Ending 2 gamestate
 class EndPlayerSide < Chingu::GameObject
 #  attr_reader :health, :score
   trait :bounding_circle, :debug => DEBUG
@@ -507,12 +506,12 @@ class EndPlayerSide < Chingu::GameObject
   def setup
     @image = Gosu::Image["assets/player_side.png"]
     @width, @height = 32, 32
-    @max_speed, @speed, @part_speed, @rotate_speed = 10, 0.4, 6, 5
+    @max_speed, @speed, @part_speed = 10, 0.4, 6
     @blink = 14
     @easing = 1.0
     @shrinkage = 1.0
     self.factor = 1.5
-    @particles = true
+#    @particles = true
     @particles_slow = 1.0
     @part_fact = 0.4
     @part_offset = 15
@@ -533,7 +532,7 @@ class EndPlayerSide < Chingu::GameObject
     self.velocity_x *= @easing
     self.velocity_y *= @easing
 
-    if @particles == true
+#    if @particles == true
       Chingu::Particle.create(:x => @x + @part_offset, :y => @y,
             :image => "assets/particle_1.png", 
             :color => 0xFF86EFFF, 
@@ -545,13 +544,13 @@ class EndPlayerSide < Chingu::GameObject
 
       Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @part_speed); particle.x -= Gosu::offset_x(@angle, @part_speed)}
       Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
-    end
+#    end
   end
 end
 
 #
 #  SPIRE
-#
+#    used in Ending3 gamestate
 class Spire < Chingu::GameObject
   def setup
     @image = Gosu::Image["assets/spire.png"]
@@ -560,7 +559,7 @@ end
 
 #
 #  SIGNATURE 1
-#
+#    used in EndCredits gamestate
 class Signature1 < Chingu::GameObject
   def setup
     @image = Image["media/assets/fut_earth_sig.png"]
@@ -570,7 +569,7 @@ end
 
 #
 #  SIGNATURE 2
-#
+#    used in EndCredits gamestate
 class Signature2 < Chingu::GameObject
   def setup
     @image = Image["media/assets/fut_earth2_sig.png"]
