@@ -9,8 +9,6 @@ class GameOver < Chingu::GameState
   end
 
   def setup
-#    @t1 = Chingu::Text.create(:text=>"You died.", :y=>180, :size=>28)
-#    @t1.x = 400 - @t1.width/2
     @t2 = Chingu::Text.create(:text=>"Game Over", :y=>280, :size=>28)
     @t2.x = 400 - @t2.width/2
     @t3 = Chingu::Text.create(:text=>"Press enter", :y=>380, :size=>28)
@@ -104,7 +102,7 @@ class Ending < Chingu::GameState
     @player = EndPlayer.create(:x => 400, :y => 640, :angle => 0, :velocity_x => 0, :velocity_y => 0, :zorder => Zorder::Main_Character)
     @earth = Earth1.create(:x => 400, :y => 200)
     # EndPlayer and Earth1 are defined in objects.rb
-    @text = Chingu::Text.create("The Earth has been saved.", :y => 900, :font => "GeosansLight", :size => 80, :color => Colors::White, :zorder => 300)
+    @text = Chingu::Text.create("The Earth has been saved.", :y => 900, :font => "GeosansLight", :size => 60, :color => Colors::White, :zorder => 300)
     @text.x = 400 - @text.width/2 
 
     after(5000) { @player.accelerate }    # scripts affecting Earth, EndPlayer; push Ending2 gamestate
@@ -119,7 +117,7 @@ class Ending < Chingu::GameState
   def update
     super
     if @text.y >= 400            # text scrolls in at end of gamestate, tracking EndPlayer movement
-      @text.y = @player.y + 320
+      @text.y = @player.y + 330
     end
   end
 end
@@ -250,13 +248,14 @@ class EndCredits < Chingu::GameState
     @t4.x = 400 - @t4.width/2
     @t5 = Chingu::Text.create(:text=>"Ruby by Yukihiro Matsumoto" , :y=>@st+@sp*5, :size=>40, :font => "GeosansLight")
     @t5.x = 400 - @t5.width/2
-    @t6 = Chingu::Text.create(:text=>"Intro Music from StarryKnight/Metro by burtlo" , :y=>@st+@sp*6, :size=>40, :font => "GeosansLight")
+    @t6 = Chingu::Text.create(:text=>"Game Theme Music by ExplodingCookie " , :y=>@st+@sp*6, :size=>40, :font => "GeosansLight")
     @t6.x = 400 - @t6.width/2
-    @t7 = Chingu::Text.create(:text=>"Game Theme Music by ExplodingCookie " , :y=>@st+@sp*7, :size=>40, :font => "GeosansLight")
+    @t7 = Chingu::Text.create(:text=>"Intro Music from StarryKnight by burtlo" , :y=>@st+@sp*7, :size=>40, :font => "GeosansLight")
     @t7.x = 400 - @t7.width/2
-    @t8 = Chingu::Text.create(:text=>"End Music by Unkown Source" , :y=>@st+@sp*8, :size=>40, :font => "GeosansLight")
+    @t8 = Chingu::Text.create(:text=>"Knight and Voice from StarryKnight by burtlo" , :y=>@st+@sp*8, :size=>40, :font => "GeosansLight")
     @t8.x = 400 - @t8.width/2
-    @t9 = Chingu::Text.create(:text=>"Knight and Voice from StarryKnight/Metro by burtlo" , :y=>@st+@sp*9, :size=>40, :font => "GeosansLight")
+
+    @t9 = Chingu::Text.create(:text=>"End Music needs attribution" , :y=>@st+@sp*9, :size=>40, :font => "GeosansLight")
     @t9.x = 400 - @t9.width/2
     @t10 = Chingu::Text.create(:text=>"Sound Effects need additional attribution" , :y=>@st+@sp*10, :size=>40, :font => "GeosansLight")
     @t10.x = 400 - @t10.width/2
@@ -282,8 +281,12 @@ class EndCredits < Chingu::GameState
     @t17.x = 400 - @t17.width/2
     @t18 = Chingu::Text.create(:text=>"Special thanks to PeterT and Spooner" , :y=>@st+@sp*19, :size=>40, :font => "GeosansLight")
     @t18.x = 400 - @t18.width/2
-    @t19 = Chingu::Text.create(:text=>"Extra Special thanks to libgosu.org" , :y=>@st+@sp*20, :size=>40, :font => "GeosansLight")
+    @t19 = Chingu::Text.create(:text=>"Extra Special thanks to jlnr and libgosu.org" , :y=>@st+@sp*20, :size=>40, :font => "GeosansLight")
     @t19.x = 400 - @t19.width/2
+    @t20 = Chingu::Text.create(:text=>"Thanks to the people of Sweden and Honduras" , :y=>@st+@sp*26, :size=>50, :font => "GeosansLight")
+    @t20.x = 400 - @t20.width/2
+    @t21 = Chingu::Text.create(:text=>"Thanks to the people of Japan and Germany" , :y=>@st+@sp*27, :size=>50, :font => "GeosansLight")
+    @t21.x = 400 - @t21.width/2
 
     after(100) { @cheering2.play(0.3) }    # scripts for crowd noise, music, and returning to Introduction gamestate
     after(2700) { @cheering2.play(0.2) }
@@ -312,7 +315,9 @@ class EndCredits < Chingu::GameState
     @t9.y -= @scroll_speed
     @t10.y -= @scroll_speed
     @t11.y -= @scroll_speed
+    @img11.y -= @scroll_speed
     @t12.y -= @scroll_speed
+    @img12.y -= @scroll_speed
     @t13.y -= @scroll_speed
     @t14.y -= @scroll_speed
     @t15.y -= @scroll_speed
@@ -320,7 +325,30 @@ class EndCredits < Chingu::GameState
     @t17.y -= @scroll_speed
     @t18.y -= @scroll_speed
     @t19.y -= @scroll_speed
-    @img11.y -= @scroll_speed
-    @img12.y -= @scroll_speed
+    if @t20.y > 650             # ease in last, final credits
+      @t20.y -= @scroll_speed
+      @t21.y -= @scroll_speed
+    elsif @t20.y > 625
+      @t20.y -= 0.4
+      @t21.y -= 0.4
+    elsif @t20.y > 600
+      @t20.y -= 0.5
+      @t21.y -= 0.5
+    elsif @t20.y > 470
+      @t20.y -= 0.4
+      @t21.y -= 0.4
+    elsif @t20.y > 462
+      @t20.y -= 0.2
+      @t21.y -= 0.2
+    elsif @t20.y > 460
+      @t20.y -= 0.1
+      @t21.y -= 0.1
+    end
   end
 end
+
+#               #
+#     T H E     #
+#               #
+#     E N D     #
+#               #

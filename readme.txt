@@ -2,22 +2,33 @@ _________________________________________________________________
 
               C H I N G U R O I D S        
 
+
  $ gem install gosu
  $ gem install chingu
+ 
  $ ruby ChinguRoids.rb
 
 _________________________________________________________________
 
                          ABOUT
 
-The future of the Earth lies in the balance. One brave galactic
-warrior has been chosen to pilot the X-71 Billennium Tigercat
-in hopes that life on Earth may be saved.....
+In the face of great danger, one brave galactic warrior has been
+chosen to pilot the X-71 Billennium Raptor...
+
+
+           You start out with 6 health (3 hearts).
+
+
+           Collect 3 stars for a weapons upgrade.
+
 
 Main Controls:           Arrows and Spacebar
 
+
 Additional Controls:     Press P at any time to Pause
+
                          Press Z at any time for Gamestate Log
+
                          There is a "cheat" button which skips
                            past levels. It's pretty easy to find.
 
@@ -25,22 +36,21 @@ _________________________________________________________________
 
                       INSTALLATION
 
-$ git clone https://github.com/Freddan962/ChinguRoids
-$ cd ChinguRoids
-ChinguRoids$ bundle install         # or you can install the gems manually
-ChinguRoids$ ruby ChinguRoids.rb
+  $ git clone https://github.com/Freddan962/ChinguRoids
+  $ cd ChinguRoids
+  ChinguRoids$ bundle install             # Automated gem install
+  ChinguRoids$ ruby ChinguRoids.rb
 
+Manual gem install:
 
-Manual install of gems:
-
-$ gem install gosu
-$ gem install chingu
+  $ gem install gosu
+  $ gem install chingu
                                (more informaiton available at libgosu.org)
 _________________________________________________________________
 
                   CHINGUROIDS CONTENTS
 
-    main.rb       -  main file: requires other files, contains GameWindow
+    ChiguRoids.rb -  main file: requires other files, contains GameWindow
     readme.txt    -  self-explanatory
     license.txt   -  self-explanatory
 
@@ -53,8 +63,11 @@ _________________________________________________________________
 
                         CREDITS
 
+            Production           Fractional
+            Production           ml
             Game Music           ExplodingCookie
             Intro Music          bartlo
+            End Music            needs attribution
             Gosu                 jlnr
             Chingu               ippa
 
