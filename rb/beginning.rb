@@ -15,11 +15,12 @@ end
 
 #
 #  PAUSE GAMESTATE
-#    pressing 'p' at any time pauses the current gamestate
+#    pressing 'P' at any time pauses the current gamestate (except possibly during fades)
 class Pause < Chingu::GameState
   def initialize(options = {})
     super
-    @title = Chingu::Text.create(:text=>"PAUSED (press 'P' to un-pause, 'R' to reset)", :x=>100, :y=>100, :size=>30, :color => Color.new(0xFF00FF00), :zorder=>1000 )
+    @title = Chingu::Text.create(:text=>"PAUSED (press 'P' to un-pause)", :y=>110, :size=>30, :color => Color.new(0xFF00FF00), :zorder=>1000 )
+    @title.x = 400 - @title.width/2
     self.input = { :p => :un_pause, :r => :reset }
     $music.pause
   end
