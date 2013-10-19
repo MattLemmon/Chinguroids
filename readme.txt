@@ -90,6 +90,7 @@ _________________________________________________________________
                            SPK
                        misbehavens
                          Shawn42
+                     EdwinOdesseiron
                        erisdiscord
 
   Special thanks to ippa and jlnr.
