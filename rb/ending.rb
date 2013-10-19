@@ -30,7 +30,7 @@ end
 class Win < Chingu::GameState
   trait :timer
   def setup
-    self.input = { :esc => :exit, :p => Pause, :r => lambda{current_game_state.setup}, [:q, :l] => :pop, :return => Ending }
+    self.input = { :esc => :exit, :p => Pause, :r => lambda{current_game_state.setup}, [:q, :l] => :pop }
     $window.caption = "Victory!"
     Bullet.destroy_all   # Destroy possible lingering GameObjects
     Player.destroy_all

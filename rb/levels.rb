@@ -6,7 +6,7 @@ class Level_1 < Chingu::GameState
   trait :timer
   def initialize
     super
-    $health = 6   # starting health is 6
+    $health = 6   # starting health is 6      These constants are updated throughout the game.
     $score = 0    # starting score is 0
     $stars = 0    # starting stars is 0
     $weapon = 1   # starting weapon is 1
@@ -114,7 +114,7 @@ class Level_1 < Chingu::GameState
     if @shaking == false   # if screen shake is cooled down
       game_objects.each do |object|  # move each object right, down, left, up, right, down, left, up
         object.x += 10
-        after(30) {object.y += 10}   # 30 tick time delay between each movement
+        after(30) {object.y += 10}   # 30 ms tick time delay between each movement
         after(60) {object.x -= 10}
         after(90) {object.y -= 10}
         after(120) {object.x += 10}
@@ -123,7 +123,7 @@ class Level_1 < Chingu::GameState
         after(210) {object.y -= 10}
       end
       @shaking = true  # screen_shake won't occur again until this becomes false
-      after(1000) {@shaking = false}  # after 1000 ticks, screen can shake again
+      after(1000) {@shaking = false}  # after 1000 ms, screen can shake again
     end
   end
 
@@ -138,7 +138,7 @@ class Level_1 < Chingu::GameState
     $player_x, $player_y = @player.x, @player.y  # save player's position, angle and velocity for next level
     $player_angle, $player_x_vel, $player_y_vel = @player.angle, @player.velocity_x, @player.velocity_y
     if Meteor1.size + Meteor2.size + Meteor3.size == 0   # if there are no meteors
-      after(1000) { push_game_state(Level_2) }           # push Level_2 gamestate
+      after(1000) { push_game_state(Level_2) }           #   push Level_2 gamestate
     end
     if $health == 0    # if $health is zero, explode player and push GameOver gamestate
       Explosion.create(:x => @player.x, :y => @player.y)
@@ -318,7 +318,7 @@ class Level_3 < Chingu::GameState
     @shaking = true
     after(1000) {@shaking = false}
 
-    @song_fade = false
+    @song_fade = false   # music fade used at end of gamestate
     @fade_count = 0
     Sound["media/audio/asplode.ogg"]  # cache sound
     Sound["media/audio/exploded.ogg"]
@@ -426,7 +426,7 @@ class Level_3 < Chingu::GameState
     end
     if Meteor1.size + Meteor2.size + Meteor3.size == 0   # if there are no more meteors
       after(1000) { @song_fade = true }                    # fade out music
-      after(3000) { push_game_state(Win) }                 # push Win gamestate
+      after(3000) { push_game_state(Win) }                 # push Win gamestate   This is the exact moment when you win!
     end
 
     if @song_fade == true  # music fades out when true
@@ -435,8 +435,8 @@ class Level_3 < Chingu::GameState
         @fade_count = 0
         $music.volume -= 0.1
       end
-
     end
+
   end
 end
 

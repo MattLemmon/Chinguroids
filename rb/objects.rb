@@ -429,17 +429,17 @@ class EndPlayer < Chingu::GameObject
     @speed = 0.34
     @max_speed, @part_speed, @rotate_speed = 10, 8, 5
     @shoot = Sound["media/audio/laser.OGG"]
-    @easing = 1.0
-    @shrinkage = 1.0
+    @easing = 1.0          # amount to slow down EndPlayer each tick
+    @shrinkage = 1.0       # amount to scale image each tick
+    @particles_slow = 1.0  # amount to adjust particle particle speed
     self.factor = 1.0
-    @particles_slow = 1.0
   end
 
-  def shrink1
+  def shrink1   # method called in Ending gamestate
     @shrinkage = 0.998
   end
   
-  def shrink2
+  def shrink2   # method called in Ending gamestate
     @shrinkage = 0.996
   end
 
@@ -457,24 +457,6 @@ class EndPlayer < Chingu::GameObject
   def adjust_particles
     @particles_slow = 0.997
   end
-
-#  def fire
-#    @shoot.play(rand(0.05..0.1))
-#    Bullet.create(:x => @x, :y => @y, :angle => @angle, :zorder => Zorder::Projectile)
-#  end
-
-#  def brake
-#    self.velocity_x *= 0.88
-#    self.velocity_y *= 0.88
-#  end
-
-#  def turn_left
-#    self.angle -= @rotate_speed
-#  end
-
-#  def turn_right
-#    self.angle += @rotate_speed
-#  end
 
   def update
     self.factor *= @shrinkage
@@ -507,15 +489,14 @@ class EndPlayerSide < Chingu::GameObject
     @image = Gosu::Image["assets/player_side.png"]
     @width, @height = 32, 32
     @max_speed, @speed, @part_speed = 10, 0.4, 6
-    @blink = 14
-    @easing = 1.0
+#    @blink = 14
+    @easing = 1.0           # define variables relating to scaling and movement
     @shrinkage = 1.0
-    self.factor = 1.5
-#    @particles = true
     @particles_slow = 1.0
     @part_fact = 0.4
     @part_offset = 15
     @part_off_change = 1.0
+    self.factor = 1.5
   end
 
   def adjust_particles
@@ -532,7 +513,6 @@ class EndPlayerSide < Chingu::GameObject
     self.velocity_x *= @easing
     self.velocity_y *= @easing
 
-#    if @particles == true
       Chingu::Particle.create(:x => @x + @part_offset, :y => @y,
             :image => "assets/particle_1.png", 
             :color => 0xFF86EFFF, 
@@ -544,7 +524,6 @@ class EndPlayerSide < Chingu::GameObject
 
       Chingu::Particle.each { |particle| particle.y -= Gosu::offset_y(@angle, @part_speed); particle.x -= Gosu::offset_x(@angle, @part_speed)}
       Chingu::Particle.destroy_if { |object| object.outside_window? || object.color.alpha == 0 }
-#    end
   end
 end
 

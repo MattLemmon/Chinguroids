@@ -73,6 +73,11 @@ class Characters < Chingu::GameObject
   end
 end
 
+# CHAR1 is included down below, after Char15
+
+#
+#  CHAR 2 - 15
+#
 class Char2 < Characters  # inherits from Characters class
   def setup
     @motion = 1
@@ -177,51 +182,22 @@ end
 #    Char1 can be controlled with the arrow keys in Ending3 gamestate
 class Char1 < Characters
   def setup
-#    self.factor = 1.1
     @motion = 1
     @image = Gosu::Image["assets/characters/char1.png"]
     self.input = [:holding_left, :holding_right, :holding_up, :holding_down ]
-#    @last_x = @x
   end
-
-  def holding_left
-    @x -= 8
-#    @frame_name = :left
-  end
-  def holding_right
-    @x += 8
-#    @frame_name = :right
-  end
-  def holding_up
-    @y -= 8
-#    @frame_name = :up
-  end
-  def holding_down
-    @y += 8
-#    @frame_name = :down
-  end
+  def holding_left;  @x -= 8;  end
+  def holding_right; @x += 8;  end
+  def holding_up;    @y -= 8;  end
+  def holding_down;  @y += 8;  end
 end
-=begin
-  def update 
-    self.factor = (@y + 100)/500.0
-    self.zorder = @y
-    if rand(20) == 1; @x += @motion; end
-    if rand(20) == 1; @x -= @motion; end
-    if rand(20) == 1; @y += @motion; end
-    if rand(20) == 1; @y -= @motion; end
-#    @last_x = @x
-  end
-end
-=end
-
-
 
 
 #
 #  CROWD
-#
+#    Enormous background multitude
 class Crowd < Chingu::GameObject
-  def setup
+  def setup           # this is a ten-frame animation
     @c1 = Gosu::Image["assets/crowd/crowd1.png"]
     @c2 = Gosu::Image["assets/crowd/crowd2.png"]
     @c3 = Gosu::Image["assets/crowd/crowd3.png"]
@@ -234,25 +210,25 @@ class Crowd < Chingu::GameObject
     @c10 = Gosu::Image["assets/crowd/crowd10.png"]
 
     @image = @c1
-    @count = 0
-    @current = 0
-    @pendulum = 1
-    @crowds = [@c1,@c2,@c3,@c4,@c5,@c6,@c7,@c8,@c9,@c10]
+    @count = 0    # counter for delay between frames
+    @current = 0  # current frame number
+    @pendulum = 1 # positive one at start
+    @crowds = [@c1,@c2,@c3,@c4,@c5,@c6,@c7,@c8,@c9,@c10]  # array of images -- basic animation loop
   end
 
-  def next_image
+  def next_image   # called once every 6 ticks in update
     @current += @pendulum
-    if @current == 9
-      @pendulum = -1
+    if @current == 9       # @current goes from 0 up to 9, back down to 0, back up to 9...
+      @pendulum = -1       # count back down from 9
     elsif @current == 0
-      @pendulum = 1
+      @pendulum = 1        # count back up from 0
     end
-    @image = @crowds[@current]
+    @image = @crowds[@current]   # switch to next animation frame [@c1, @c2, etc.]
   end
 
   def update
     @count += 1
-    if @count == 6
+    if @count == 6    # 6-tick delay between frames
       @count = 0
       next_image
     end
