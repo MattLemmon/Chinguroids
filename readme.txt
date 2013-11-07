@@ -3,7 +3,7 @@ _________________________________________________________________
               C H I N G U R O I D S        
 
 
- $ gem install gosu
+ $ gem install gosu -v 0.7.48
  $ gem install chingu
  
  $ ruby ChinguRoids.rb
@@ -36,14 +36,14 @@ _________________________________________________________________
 
                       INSTALLATION
 
-  $ git clone https://github.com/Freddan962/ChinguRoids
-  $ cd ChinguRoids
+  $ git clone git@github.com:MattLemmon/ChinguRoids-1.git
+  $ cd ChinguRoids-1
   ChinguRoids$ bundle install             # Automated gem install
   ChinguRoids$ ruby ChinguRoids.rb
 
 Manual gem install:
 
-  $ gem install gosu
+  $ gem install gosu -v 0.7.48
   $ gem install chingu
                                (more informaiton available at libgosu.org)
 _________________________________________________________________
