@@ -3,10 +3,9 @@ _________________________________________________________________
               C H I N G U R O I D S        
 
 
- $ gem install gosu -v 0.7.48
- $ gem install chingu
+ $ bundle install
  
- $ ruby ChinguRoids.rb
+ $ ruby Chinguroids.rb
 
 _________________________________________________________________
 
@@ -36,21 +35,24 @@ _________________________________________________________________
 
                       INSTALLATION
 
-  $ git clone git@github.com:MattLemmon/ChinguRoids-1.git
-  $ cd ChinguRoids-1
+Dependencies for OSX: 
+        https://github.com/gosu/gosu/wiki/Getting-Started-on-OS-X
+
+  $ git clone git@github.com:MattLemmon/Chinguroids.git
+  $ cd Chinguroids
   ChinguRoids$ bundle install             # Automated gem install
-  ChinguRoids$ ruby ChinguRoids.rb
+  ChinguRoids$ ruby Chinguroids.rb
 
 Manual gem install:
 
-  $ gem install gosu -v 0.7.48
+  $ gem install gosu
   $ gem install chingu
-                               (more informaiton available at libgosu.org)
+                      (more informaiton available at libgosu.org)
 _________________________________________________________________
 
                   CHINGUROIDS CONTENTS
 
-    ChiguRoids.rb -  main file: requires other files, contains GameWindow
+    Chiguroids.rb -  main file: requires other files, contains GameWindow
     readme.txt    -  self-explanatory
     license.txt   -  self-explanatory
 

@@ -37,10 +37,9 @@ class EndKnight < Chingu::GameObject
     @image = Image["media/assets/knight_left.png"]
   end
   def update
-    @x -= 2.2  # EndKnight starts offscreen and continually moves to the left
+    @x -= 0.9  # EndKnight starts offscreen and continually moves to the left
   end
 end
-
 
 #
 #  CHARACTERS

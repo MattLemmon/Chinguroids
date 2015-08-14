@@ -1,4 +1,3 @@
-
 #
 #  GUI CLASS
 #    Health Meter, Star Meter, Score
@@ -6,12 +5,12 @@ class GUI < Chingu::GameObject
 	def initialize(player)
 		super()
 		@gui_player = player
-		@heart_full = Gosu::Image.new($window, "media/assets/heart.png")
-		@heart_half = Gosu::Image.new($window, "media/assets/heart_half.png")
-		@heart_empty = Gosu::Image.new($window, "media/assets/heart_empty.png")
-		@star_full = Gosu::Image.new($window, "media/assets/star_full.png")
+		@heart_full = Image["media/assets/heart.png"]
+		@heart_half = Image["media/assets/heart_half.png"]
+		@heart_empty = Image["media/assets/heart_empty.png"]
+		@star_full = Image["media/assets/star_full.png"]
 #		@star_half = Gosu::Image.new($window, "media/assets/star_half.png")
-		@star_empty = Gosu::Image.new($window, "media/assets/star_empty.png")
+		@star_empty = Image["media/assets/star_empty.png"]
 
 		@score_text = Chingu::Text.create("Score: #{$score}", :y => 0, :font => "GeosansLight", :size => 20, :color => Colors::White, :zorder => Zorder::GUI)
 		@score_text.x = 800/2 - @score_text.width/2

@@ -27,7 +27,7 @@ class Player < Chingu::GameObject
   end
 
   def damage
-    if @cooling_down == 0  # only causes damage is player is not blinking
+    if @cooling_down == 0  # only causes damage if player is not blinking
       @cooling_down = $cooling_down
       $health -= 1
       Sound["media/audio/exploded.ogg"].play(0.3)
@@ -122,13 +122,38 @@ end
 #   EXPLOSION
 #     called in levels.rb when meteors are destroyed and when player dies
 class Explosion < Chingu::GameObject
-  trait :timer
+  traits :timer
   def setup
-    @animation = Chingu::Animation.new(:file => "media/assets/explosion.png", :delay => 5)
+    @ex1, @ex2, @ex3, @ex4, @ex5, @ex6, @ex7, @ex8, @ex9, @ex10, @ex11=
+      *Image.load_tiles($window, "media/assets/explosion.png", 100, 100, false)
+    @image = @ex1
+#    @animation = Chingu::Animation.new(:file => "media/assets/explosion.png", :delay => 5)
   end
   def update
-    @image = @animation.next
-    after(100) {self.destroy}
+    if @image == @ex1
+      @image = @ex2
+    elsif @image == @ex2
+      @image = @ex3
+    elsif @image == @ex3
+      @image = @ex4
+    elsif @image == @ex4
+      @image = @ex5
+    elsif @image == @ex5
+      @image = @ex6
+    elsif @image == @ex6
+      @image = @ex7
+    elsif @image == @ex7
+      @image = @ex8
+    elsif @image == @ex8
+      @image = @ex9
+    elsif @image == @ex9
+      @image = @ex10
+    elsif @image == @ex10
+      @image = @ex11
+    elsif @image == @ex11
+      self.destroy
+    end
+#    @image = @animation.next
   end
 end
 
@@ -229,16 +254,6 @@ class Meteor1 < Chingu::GameObject
     @max_x, @max_y, @scr_edge = $max_x, $max_y, $scr_edge
     cache_bounding_circle   # cache meteor size for collision detection
   end
-
-#  def meteor_placement
-#    if rand(2) == 1
-#      self.x = 0
-#      self.y = rand(600)
-#    else
-#      self.x = rand(800)
-#      self.y = 0
-#    end
-#  end
 
   def update
     @angle += @rotate
@@ -489,7 +504,6 @@ class EndPlayerSide < Chingu::GameObject
     @image = Gosu::Image["assets/player_side.png"]
     @width, @height = 32, 32
     @max_speed, @speed, @part_speed = 10, 0.4, 6
-#    @blink = 14
     @easing = 1.0           # define variables relating to scaling and movement
     @shrinkage = 1.0
     @particles_slow = 1.0

@@ -1,4 +1,3 @@
-
 #
 #   GAMEOVER GAMESTATE
 #     simple GameOver gamestate
@@ -102,7 +101,7 @@ class Ending < Chingu::GameState
     @player = EndPlayer.create(:x => 400, :y => 640, :angle => 0, :velocity_x => 0, :velocity_y => 0, :zorder => Zorder::Main_Character)
     @earth = Earth1.create(:x => 400, :y => 200)
     # EndPlayer and Earth1 are defined in objects.rb
-    @text = Chingu::Text.create("The Earth has been saved.", :y => 900, :font => "GeosansLight", :size => 60, :color => Colors::White, :zorder => 300)
+    @text = Chingu::Text.create("The Earth has been saved.", :y => 900, :font => "GeosansLight", :size => 46, :color => Colors::White, :zorder => 300)
     @text.x = 400 - @text.width/2 
 
     after(5000) { @player.accelerate }    # scripts affecting Earth, EndPlayer; push Ending2 gamestate
@@ -173,7 +172,7 @@ class Ending3 < Chingu::GameState
     self.input = { :esc => :exit, [:enter, :return] => EndCredits, :p => Pause, :r => lambda{current_game_state.setup} }
 
     @spire = Spire.create(:x => 490, :y => 80, :factor => 0.7, :zorder => 250)
-    @knight = EndKnight.create(:x => 1200, :y => 505, :factor => 1.4, :zorder => 600)
+    @knight = EndKnight.create(:x => 1040, :y => 505, :factor => 1.4, :zorder => 600)
     @multitude = Crowd.create(:x=>400,:y=>150) # creates a multitude in the background
     # EndKnight and Crowd are defined in characters.rb; Spire is defined in objects.rb
 
@@ -240,7 +239,7 @@ class EndCredits < Chingu::GameState
     # end credits start offscreen
     @t1 = Chingu::Text.create(:text=>"" , :y=>675, :size=>40, :font => "GeosansLight")
     @t1.x = 400 - @t1.width/2   # @t1 is currently blank
-    @t2 = Chingu::Text.create(:text=>"Produced by Fractional and mpl" , :y=>@st+@sp*2, :size=>40, :font => "GeosansLight")
+    @t2 = Chingu::Text.create(:text=>"Created by Matt Lemmon and Fractional" , :y=>@st+@sp*2, :size=>40, :font => "GeosansLight")
     @t2.x = 400 - @t2.width/2
     @t3 = Chingu::Text.create(:text=>"Gosu by jlnr" , :y=>@st+@sp*3, :size=>40, :font => "GeosansLight")
     @t3.x = 400 - @t3.width/2
@@ -255,10 +254,10 @@ class EndCredits < Chingu::GameState
     @t8 = Chingu::Text.create(:text=>"Knight and Voice from StarryKnight by burtlo" , :y=>@st+@sp*8, :size=>40, :font => "GeosansLight")
     @t8.x = 400 - @t8.width/2
 
-    @t9 = Chingu::Text.create(:text=>"End Music needs attribution" , :y=>@st+@sp*9, :size=>40, :font => "GeosansLight")
+    @t9 = Chingu::Text.create(:text=>"End Music creator unknown" , :y=>@st+@sp*9, :size=>40, :font => "GeosansLight")
     @t9.x = 400 - @t9.width/2
-    @t10 = Chingu::Text.create(:text=>"Sound Effects need additional attribution" , :y=>@st+@sp*10, :size=>40, :font => "GeosansLight")
-    @t10.x = 400 - @t10.width/2
+#    @t10 = Chingu::Text.create(:text=>"Sound Effects need additional attribution" , :y=>@st+@sp*10, :size=>40, :font => "GeosansLight")
+#    @t10.x = 400 - @t10.width/2
     @t11 = Chingu::Text.create(:text=>"Future Earth by" , :y=>@st+@sp*11, :size=>40, :font => "GeosansLight")
     @t11.x = 400 - @t11.width/2
     @img11 = Signature1.create
@@ -277,15 +276,15 @@ class EndCredits < Chingu::GameState
     @t15.x = 400 - @t15.width/2
     @t16 = Chingu::Text.create(:text=>"Additional thanks to Gimp" , :y=>@st+@sp*16, :size=>40, :font => "GeosansLight")
     @t16.x = 400 - @t16.width/2
-    @t17 = Chingu::Text.create(:text=>"Additional thanks to gamedev.stackexchange.com" , :y=>@st+@sp*17, :size=>40, :font => "GeosansLight")
-    @t17.x = 400 - @t17.width/2
+#    @t17 = Chingu::Text.create(:text=>"Additional thanks to gamedev.stackexchange.com" , :y=>@st+@sp*17, :size=>40, :font => "GeosansLight")
+#    @t17.x = 400 - @t17.width/2
     @t18 = Chingu::Text.create(:text=>"Special thanks to PeterT and Spooner" , :y=>@st+@sp*19, :size=>40, :font => "GeosansLight")
     @t18.x = 400 - @t18.width/2
     @t19 = Chingu::Text.create(:text=>"Extra Special thanks to jlnr and libgosu.org" , :y=>@st+@sp*20, :size=>40, :font => "GeosansLight")
     @t19.x = 400 - @t19.width/2
-    @t20 = Chingu::Text.create(:text=>"Thanks to the people of Sweden and Honduras" , :y=>@st+@sp*26, :size=>50, :font => "GeosansLight")
+    @t20 = Chingu::Text.create(:text=>"Thanks to the people of Sweden and Honduras" , :y=>@st+@sp*26, :size=>40, :font => "GeosansLight")
     @t20.x = 400 - @t20.width/2
-    @t21 = Chingu::Text.create(:text=>"Thanks to the people of Japan and Germany" , :y=>@st+@sp*27, :size=>50, :font => "GeosansLight")
+    @t21 = Chingu::Text.create(:text=>"Thanks to the people of Japan and Germany" , :y=>@st+@sp*27, :size=>40, :font => "GeosansLight")
     @t21.x = 400 - @t21.width/2
 
     after(100) { @cheering2.play(0.3) }    # scripts for crowd noise, music, and returning to Introduction gamestate
@@ -313,7 +312,7 @@ class EndCredits < Chingu::GameState
     @t7.y -= @scroll_speed
     @t8.y -= @scroll_speed
     @t9.y -= @scroll_speed
-    @t10.y -= @scroll_speed
+#    @t10.y -= @scroll_speed
     @t11.y -= @scroll_speed
     @img11.y -= @scroll_speed
     @t12.y -= @scroll_speed
@@ -322,7 +321,7 @@ class EndCredits < Chingu::GameState
     @t14.y -= @scroll_speed
     @t15.y -= @scroll_speed
     @t16.y -= @scroll_speed
-    @t17.y -= @scroll_speed
+#    @t17.y -= @scroll_speed
     @t18.y -= @scroll_speed
     @t19.y -= @scroll_speed
     if @t20.y > 650             # ease in last, final credits
@@ -334,13 +333,13 @@ class EndCredits < Chingu::GameState
     elsif @t20.y > 600
       @t20.y -= 0.5
       @t21.y -= 0.5
-    elsif @t20.y > 470
+    elsif @t20.y > 500
       @t20.y -= 0.4
       @t21.y -= 0.4
-    elsif @t20.y > 462
+    elsif @t20.y > 492
       @t20.y -= 0.2
       @t21.y -= 0.2
-    elsif @t20.y > 460
+    elsif @t20.y > 490
       @t20.y -= 0.1
       @t21.y -= 0.1
     end

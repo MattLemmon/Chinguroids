@@ -1,6 +1,8 @@
 require 'chingu'
 include Gosu
 
+# WELCOME TO CHINGUROIDS
+
 require_relative 'rb/beginning.rb'   # require relevant files
 require_relative 'rb/levels.rb'
 require_relative 'rb/objects.rb'
@@ -23,7 +25,6 @@ module Colors   # define some colors
 	White = Gosu::Color.new(0xFFFFFFFF)
 	Blue_Laser = Gosu::Color.new(0xFF86EFFF)
 end
-
 
 #
 #  GameWindow Class
@@ -56,7 +57,7 @@ class GameWindow < Chingu::Window
     puts $window.current_game_state
   end
 
-  def pop  # pressing 'q' or 'l' at any time quits out of current gamestate
+  def pop  # pressing 'q' or 'l' at any time backs out of current gamestate
     if $window.current_game_state.to_s == "Introduction" or $window.current_game_state.to_s == "Level_1" then
       pop_game_state(:setup => true)
     elsif $window.current_game_state.to_s != "OpeningCredits"

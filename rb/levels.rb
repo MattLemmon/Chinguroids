@@ -1,4 +1,3 @@
-
 #
 #   LEVEL 1 GAMESTATE
 #      This is where the actual gameplay begins
@@ -39,10 +38,13 @@ class Level_1 < Chingu::GameState
     @player.cool_down      # player cannot be damaged when blinking (Player.cool_down from objects.rb)
     1.times { new_meteor } # creates meteors
 
-    after(100) {           # plays game music by ExplodingCookie after brief pause
+    after(500) {           # plays game music by ExplodingCookie after brief pause
       $music.play(true)
-      $music.volume = 0.25
-    }
+      $music.volume = 1.5
+      after(4000) {$music.volume = 0.85
+        after(300) {$music.volume = 0.65
+          after(300) {$music.volume = 0.35}
+    }  }  }
   end
 
   def new_meteor           # creates 3 meteors and 3 stars (from objects.rb)
@@ -148,7 +150,6 @@ class Level_1 < Chingu::GameState
     end
   end
 end
-
 
 
 #
