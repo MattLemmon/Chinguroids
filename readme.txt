@@ -114,5 +114,5 @@ Kinght Voice - from metro by burtlo
 
 Some sound effects need additional attribution.
 
-More attribution included in ChinguRoids game closing credits.
+More attribution included in Chinguroids game closing credits.
 _________________________________________________________________
